@@ -171,8 +171,12 @@ class MeetingController extends Controller
     private function syncMeetingToGoogle(Meeting $meeting): ?string
     {
         $organizer = $meeting->organizer()->first();
-        if (!$organizer || !$this->googleCalendarService->hasConnectedCalendar($organizer)) {
+        if (!$organizer) {
             return null;
+        }
+
+        if (!$this->googleCalendarService->hasConnectedCalendar($organizer)) {
+            return 'La reunión se guardó en Korum. Conecta Google Calendar para sincronizarla automáticamente.';
         }
 
         try {
@@ -187,8 +191,12 @@ class MeetingController extends Controller
     private function cancelMeetingInGoogle(Meeting $meeting): ?string
     {
         $organizer = $meeting->organizer()->first();
-        if (!$organizer || !$this->googleCalendarService->hasConnectedCalendar($organizer)) {
+        if (!$organizer) {
             return null;
+        }
+
+        if (!$this->googleCalendarService->hasConnectedCalendar($organizer)) {
+            return 'La reunión se guardó en Korum. Conecta Google Calendar para sincronizar también las cancelaciones.';
         }
 
         try {

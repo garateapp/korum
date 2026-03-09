@@ -41,7 +41,7 @@ const NavItem = ({ href, icon: Icon, children, active, badge }) => (
 );
 
 export default function AuthenticatedLayout({ header, children }) {
-    const { auth } = usePage().props;
+    const { auth, flash } = usePage().props;
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
@@ -319,6 +319,20 @@ export default function AuthenticatedLayout({ header, children }) {
 
                 {/* Smooth Page Content */}
                 <main className="flex-1 overflow-y-auto p-6 lg:p-10 scroll-smooth bg-[#F8FAFC]">
+                    {(flash?.success || flash?.error) && (
+                        <div className="mb-6 space-y-3">
+                            {flash?.success && (
+                                <div className="alert alert-success shadow-md rounded-2xl">
+                                    <span className="text-sm font-bold">{flash.success}</span>
+                                </div>
+                            )}
+                            {flash?.error && (
+                                <div className="alert alert-error shadow-md rounded-2xl">
+                                    <span className="text-sm font-bold">{flash.error}</span>
+                                </div>
+                            )}
+                        </div>
+                    )}
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={header}
