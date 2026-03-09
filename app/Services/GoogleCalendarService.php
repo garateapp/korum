@@ -147,15 +147,27 @@ class GoogleCalendarService
             $meeting->save();
             foreach ($event['attendees'] ?? [] as $attendee) {
                 try{
+                $user=USer::where('email', (string) $attendee['email'])->first();
+                if (!$user) {
                 User::firstOrCreate([
                     'email' => (string) $attendee['email'],
                     'name' => (string) $attendee['displayName'] ?? '',
                     'status' => 'active',
                     'password'=> bcrypt(Str::random(8)),
                 ]);
+
                 $meeting->participants()->updateOrCreate([
                     'user_id' => User::where('email', (string) $attendee['email'])->value('id'),
+                    'role_in_meeting' => 'invitado',
                 ]);
+                }
+                else
+                {
+                    $meeting->participants()->updateOrCreate([
+                        'user_id' => $user->id,
+                        'role_in_meeting' => 'invitado',
+                    ]);
+                }
                 }catch (\Exception $e){
                     Log::error($e->getMessage());
                 }
