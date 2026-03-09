@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use RuntimeException;
+use Illuminate\Support\Facades\Log;
 
 class GoogleCalendarService
 {
@@ -124,7 +125,7 @@ class GoogleCalendarService
                 $meeting->code = $this->buildMeetingCode($user->id, $eventId);
                 $meeting->organizer_id = $user->id;
             }
-
+            Log::info($event['attendees'] ?? []);
             $meeting->fill([
                 'subject' => trim((string) data_get($event, 'summary', 'Reunión Google Calendar')),
                 'description' => (string) data_get($event, 'description', 'Importada automáticamente desde Google Calendar.'),
