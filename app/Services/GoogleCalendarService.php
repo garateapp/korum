@@ -127,7 +127,7 @@ class GoogleCalendarService
                 $meeting->organizer_id = $user->id;
             }
 
-            Log::info($event['attendees'] ?? []);
+
 
             $meeting->fill([
                 'subject' => trim((string) data_get($event, 'summary', 'Reunión Google Calendar')),

@@ -62,7 +62,7 @@ class MeetingController extends Controller
                 ->paginate(10)
                 ->withQueryString();
         }
-            
+
         return Inertia::render('Meetings/Index', [
             'meetings' => $meetings,
             'filters' => $request->only(['search', 'show_cancelled', 'view', 'sort_by', 'sort_dir']),
@@ -118,7 +118,7 @@ class MeetingController extends Controller
         $this->ensureMeetingVisibleToUser($meeting, (int) $request->user()->id);
 
         $meeting->load(['department', 'meetingType', 'organizer', 'participants.user', 'agendaItems.speaker', 'minute', 'attachments.uploader']);
-        
+        dd($meeting);
         return Inertia::render('Meetings/Show', [
             'meeting' => $meeting,
             'users' => \App\Models\User::all(['id', 'name', 'email']),
