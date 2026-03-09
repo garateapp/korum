@@ -11,13 +11,18 @@ class SearchController extends Controller
     public function index(Request $request)
     {
         $q = $request->query('q');
+        $userId = (int) $request->user()->id;
 
         if (!$q) {
             return response()->json(['results' => []]);
         }
 
-        $meetings = Meeting::where('subject', 'like', "%{$q}%")
-            ->orWhere('code', 'like', "%{$q}%")
+        $meetings = Meeting::query()
+            ->visibleTo($userId)
+            ->where(function ($query) use ($q) {
+                $query->where('subject', 'like', "%{$q}%")
+                    ->orWhere('code', 'like', "%{$q}%");
+            })
             ->latest()
             ->take(5)
             ->get(['id', 'subject', 'code', 'status'])

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Meeting;
 use App\Models\Department;
+use App\Models\Meeting;
 use App\Models\MeetingType;
 use App\Services\GoogleCalendarService;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
 class MeetingController extends Controller
@@ -19,7 +20,11 @@ class MeetingController extends Controller
 
     public function index(Request $request)
     {
-        $query = Meeting::with(['organizer', 'department', 'meetingType']);
+        $userId = (int) $request->user()->id;
+
+        $query = Meeting::query()
+            ->visibleTo($userId)
+            ->with(['organizer', 'department', 'meetingType']);
 
         // Default: exclude cancelled meetings
         if (!$request->boolean('show_cancelled')) {
@@ -93,8 +98,10 @@ class MeetingController extends Controller
         return $redirect;
     }
 
-    public function show(Meeting $meeting)
+    public function show(Request $request, Meeting $meeting)
     {
+        $this->ensureMeetingVisibleToUser($meeting, (int) $request->user()->id);
+
         $meeting->load(['department', 'meetingType', 'organizer', 'participants.user', 'agendaItems.speaker', 'minute', 'attachments.uploader']);
         
         return Inertia::render('Meetings/Show', [
@@ -103,8 +110,10 @@ class MeetingController extends Controller
         ]);
     }
 
-    public function edit(Meeting $meeting)
+    public function edit(Request $request, Meeting $meeting)
     {
+        $this->ensureMeetingVisibleToUser($meeting, (int) $request->user()->id);
+
         return Inertia::render('Meetings/Edit', [
             'meeting' => $meeting,
             'departments' => Department::all(),
@@ -114,6 +123,8 @@ class MeetingController extends Controller
 
     public function update(Request $request, Meeting $meeting)
     {
+        $this->ensureMeetingVisibleToUser($meeting, (int) $request->user()->id);
+
         $validated = $request->validate([
             'subject' => 'required|string|max:255',
             'description' => 'required|string',
@@ -140,8 +151,10 @@ class MeetingController extends Controller
         return $redirect;
     }
 
-    public function destroy(Meeting $meeting)
+    public function destroy(Request $request, Meeting $meeting)
     {
+        $this->ensureMeetingVisibleToUser($meeting, (int) $request->user()->id);
+
         $syncError = $this->cancelMeetingInGoogle($meeting);
         $meeting->delete();
 
@@ -155,8 +168,10 @@ class MeetingController extends Controller
         return $redirect;
     }
 
-    public function cancel(Meeting $meeting)
+    public function cancel(Request $request, Meeting $meeting)
     {
+        $this->ensureMeetingVisibleToUser($meeting, (int) $request->user()->id);
+
         $meeting->update(['status' => 'cancelada']);
         $syncError = $this->cancelMeetingInGoogle($meeting->fresh());
 
@@ -205,6 +220,13 @@ class MeetingController extends Controller
         } catch (Throwable $exception) {
             report($exception);
             return 'La reunión se guardó en Korum, pero no se pudo cancelar en Google Calendar.';
+        }
+    }
+
+    private function ensureMeetingVisibleToUser(Meeting $meeting, int $userId): void
+    {
+        if (!$meeting->isVisibleTo($userId)) {
+            throw new HttpException(403, 'No tienes permisos para acceder a esta reunión.');
         }
     }
 }

@@ -13,10 +13,12 @@ class DashboardController extends Controller
     public function __invoke()
     {
         $user = Auth::user();
+        $userId = (int) $user->id;
         
         // Stats
-        $totalMeetings = Meeting::count();
-        $meetingsToday = Meeting::whereDate('date', now())->count();
+        $meetingVisibilityQuery = Meeting::query()->visibleTo($userId);
+        $totalMeetings = (clone $meetingVisibilityQuery)->count();
+        $meetingsToday = (clone $meetingVisibilityQuery)->whereDate('date', now())->count();
         
         $pendingAgreements = Agreement::where('status', '!=', 'realizado')->count();
         $myPendingAgreements = Agreement::where('status', '!=', 'realizado')
@@ -31,7 +33,9 @@ class DashboardController extends Controller
             ->count();
 
         // Upcoming meetings
-        $upcomingMeetings = Meeting::with(['department', 'meetingType'])
+        $upcomingMeetings = Meeting::query()
+            ->visibleTo($userId)
+            ->with(['department', 'meetingType'])
             ->where('date', '>=', now())
             ->where('status', 'programada')
             ->orderBy('date')
