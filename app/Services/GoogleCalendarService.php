@@ -30,7 +30,6 @@ class GoogleCalendarService
                 'access_type' => 'offline',
                 'prompt' => $prompt,
                 'include_granted_scopes' => 'true',
-                'approval_prompt' => $forceConsent ? 'force' : 'auto',
             ])
             ->redirect();
     }

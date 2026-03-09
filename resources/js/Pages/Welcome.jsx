@@ -18,10 +18,15 @@ export default function Welcome({ auth }) {
             <Head title="Bienvenido a Korum" />
 
             {/* Top Navigation */}
-            <nav className="fixed top-0 left-0 right-0 h-20 glass-header flex items-center justify-between px-6 lg:px-20 z-50">
+            <nav className="fixed top-0 left-0 right-0 h-30 glass-header flex items-center justify-between px-6 lg:px-20 z-50">
                 <div className="flex items-center gap-2 group cursor-pointer">
-                    <img src="/img/logo-korum.png" alt="Korum Logo" className="w-10 h-10 object-contain group-hover:rotate-12 transition-transform" />
-                    <span className="text-2xl font-black tracking-tight text-primary">Korum</span>
+
+                    <img
+                        src="/img/logo-korum.png"
+                        alt="Korum Logo"
+                        className="h-[120px] w-auto object-contain"
+                    />
+
                 </div>
                 <div className="flex items-center gap-4">
                     {auth.user ? (
@@ -31,7 +36,7 @@ export default function Welcome({ auth }) {
                     ) : (
                         <>
                             <Link href={route('login')} className="btn btn-ghost font-bold opacity-60 hover:opacity-100">Iniciar Sesión</Link>
-                            <Link href={route('register')} className="btn btn-primary rounded-2xl font-black px-8 shadow-xl shadow-primary/20">Empieza Gratis</Link>
+
                         </>
                     )}
                 </div>
@@ -57,32 +62,11 @@ export default function Welcome({ auth }) {
                         <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium opacity-50 mb-12 leading-relaxed">
                             Korum transforma tus reuniones en acciones trazables. Planifica, registra y haz seguimiento de cada decisión hasta su éxito final.
                         </p>
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <Link href={route('register')} className="btn btn-primary btn-lg rounded-3xl px-12 font-black uppercase tracking-widest shadow-2xl shadow-primary/30 h-16">
-                                Crear mi Cuenta <ArrowRight className="ml-2" />
-                            </Link>
-                            <button className="btn btn-ghost btn-lg rounded-3xl px-8 font-bold opacity-60">Ver Demo en Video</button>
-                        </div>
+
                     </motion.div>
 
                     {/* Screenshot Placeholder with Bento Card */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9, y: 40 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        transition={{ delay: 0.4, duration: 1 }}
-                        className="mt-24 relative max-w-5xl mx-auto"
-                    >
-                        <div className="aspect-video bg-base-200 rounded-[2.5rem] border-4 border-base-100 shadow-[0_40px_100px_rgba(0,0,0,0.1)] overflow-hidden flex items-center justify-center group relative">
-                            <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent"></div>
-                            <div className="bento-card max-w-md w-full m-8 scale-90 md:scale-100 shadow-2xl">
-                                <div className="flex items-center gap-4 mb-6">
-                                    <div className="p-3 bg-success/10 text-success rounded-2xl"><CheckCircle /></div>
-                                    <div className="flex-1"><h3 className="font-black text-left">Acuerdo Realizado</h3><div className="w-full bg-base-300 h-2 rounded-full mt-1 overflow-hidden"><div className="w-[85%] h-full bg-success"></div></div></div>
-                                </div>
-                                <p className="text-left text-sm font-medium opacity-60">Implementar sistema de seguimiento de minutos en fase beta.</p>
-                            </div>
-                        </div>
-                    </motion.div>
+
                 </div>
             </main>
 
@@ -127,44 +111,10 @@ export default function Welcome({ auth }) {
             </section>
 
             {/* CTA Final */}
-            <section className="py-40 text-center relative">
-                <div className="max-w-4xl mx-auto px-6">
-                    <h2 className="text-5xl font-black tracking-tighter mb-10">¿Listo para transformar <br />tus reuniones?</h2>
-                    <Link href={route('register')} className="btn btn-primary btn-lg rounded-3xl px-16 font-black uppercase tracking-widest shadow-2xl shadow-primary/30 h-16">
-                        Comenzar ahora
-                    </Link>
-                    <p className="mt-8 text-xs font-bold opacity-30 uppercase tracking-[0.3em]">No se requiere tarjeta de crédito</p>
-                </div>
-            </section>
+
 
             {/* Footer */}
-            <footer className="footer p-10 bg-base-100 text-base-content border-t border-base-200">
-                <aside>
-                    <div className="flex items-center gap-2 mb-4">
-                        <img src="/img/logo-korum.png" alt="Logo" className="w-8 h-8 object-contain" />
-                        <span className="text-xl font-black tracking-tighter text-primary">Korum</span>
-                    </div>
-                    <p className="font-bold opacity-40">Korum Management S.A.<br />Un producto de excelencia organizacional.</p>
-                </aside>
-                <nav>
-                    <h6 className="footer-title opacity-40">Producto</h6>
-                    <a className="link link-hover font-bold">Características</a>
-                    <a className="link link-hover font-bold">Precios</a>
-                    <a className="link link-hover font-bold">Seguridad</a>
-                </nav>
-                <nav>
-                    <h6 className="footer-title opacity-40">Compañía</h6>
-                    <a className="link link-hover font-bold">Acerca de</a>
-                    <a className="link link-hover font-bold">Contacto</a>
-                    <a className="link link-hover font-bold">Blog</a>
-                </nav>
-                <nav>
-                    <h6 className="footer-title opacity-40">Legal</h6>
-                    <a className="link link-hover font-bold">Términos de uso</a>
-                    <a className="link link-hover font-bold">Privacidad</a>
-                    <a className="link link-hover font-bold">Cookies</a>
-                </nav>
-            </footer>
+
         </div>
     );
 }
