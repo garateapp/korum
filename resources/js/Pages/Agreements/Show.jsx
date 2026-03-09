@@ -185,12 +185,7 @@ export default function Show({ auth, agreement }) {
                 {/* Sidebar Registro - Bento Card Flotante */}
                 <div className="space-y-6">
                     {/* Documentos de Evidencia */}
-                    <ResourceFolder
-                        title="Evidencias"
-                        type="App\Models\Agreement"
-                        id={agreement.id}
-                        attachments={agreement.attachments}
-                    />
+
 
                     <div className="bento-card sticky top-28 bg-primary/5 border-primary/20 backdrop-blur-md">
                         <h3 className="text-xl font-black mb-6 flex items-center gap-3">
@@ -248,7 +243,12 @@ export default function Show({ auth, agreement }) {
                             </button>
                         </form>
                     </div>
-
+                         <ResourceFolder
+                        title="Evidencias"
+                        type="App\Models\Agreement"
+                        id={agreement.id}
+                        attachments={agreement.attachments}
+                    />
                     <div className="bento-card p-6 flex items-center gap-4 bg-secondary/5 border-secondary/20">
                         <div className="p-3 bg-secondary/10 rounded-2xl text-secondary">
                             <MessageCircle size={20} />

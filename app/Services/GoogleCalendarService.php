@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use RuntimeException;
 use Illuminate\Support\Facades\Log;
-use App\Models\User;
+
 
 class GoogleCalendarService
 {
