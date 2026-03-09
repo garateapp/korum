@@ -118,7 +118,7 @@ class MeetingController extends Controller
         $this->ensureMeetingVisibleToUser($meeting, (int) $request->user()->id);
 
         $meeting->load(['department', 'meetingType', 'organizer', 'participants.user', 'agendaItems.speaker', 'minute', 'attachments.uploader']);
-        dd($meeting);
+
         return Inertia::render('Meetings/Show', [
             'meeting' => $meeting,
             'users' => \App\Models\User::all(['id', 'name', 'email']),
