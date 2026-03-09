@@ -31,7 +31,7 @@ export default function Dashboard({ auth, stats, upcomingMeetings, recentAgreeme
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                     <div>
                         <h2 className="text-3xl font-black text-base-content tracking-tight">¡Hola, {auth.user.name}!</h2>
-                        <p className="text-base-content/50 font-medium">Aquí tienes el resumen de la actividad de hoy</p>
+                        <p className="text-base-content/50 font-medium">Aquí tienes el resumen de las actividades de hoy.</p>
                     </div>
                     <div className="text-sm font-bold opacity-40 uppercase tracking-widest">{new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
                 </div>
