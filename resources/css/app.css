@@ -1,0 +1,69 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@plugin "daisyui/theme" {
+    name: "korum";
+    default: true;
+    prefersdark: false;
+    color-scheme: "light";
+    /* Colores extraídos del logo */
+    --color-primary: oklch(55% 0.18 245);
+    /* Deep Blue #0063C6 */
+    --color-primary-content: oklch(98% 0.01 245);
+
+    --color-secondary: oklch(75% 0.15 185);
+    /* Teal #00D5B5 */
+    --color-secondary-content: oklch(20% 0.05 185);
+
+    --color-accent: oklch(85% 0.12 165);
+    /* Mint #00F2C3 */
+    --color-accent-content: oklch(25% 0.08 165);
+
+    --color-neutral: oklch(90% 0.02 245);
+    --color-neutral-content: oklch(20% 0.05 245);
+
+    --color-base-100: oklch(100% 0 0);
+    --color-base-200: oklch(98% 0.01 245);
+    --color-base-300: oklch(95% 0.02 245);
+    --color-base-content: oklch(20% 0.05 245);
+
+    --radius-selector: 0.75rem;
+    --radius-field: 0.5rem;
+    --radius-box: 1rem;
+    --border: 1px;
+}
+
+@theme {
+    --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    --animate-float: float 3s ease-in-out infinite;
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-5px);
+        }
+    }
+}
+
+.glass-header {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-minimal {
+    @apply bg-base-200 border-r border-base-300;
+}
+
+.bento-card {
+    @apply bg-base-100 rounded-2xl p-6 shadow-sm border border-base-200 transition-all duration-300 hover:shadow-md hover:border-primary/20;
+}
+
+
+@source "../views";

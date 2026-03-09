@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Agreement;
+use App\Models\Meeting;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
+
+class DashboardController extends Controller
+{
+    public function __invoke()
+    {
+        $user = Auth::user();
+        
+        // Stats
+        $totalMeetings = Meeting::count();
+        $meetingsToday = Meeting::whereDate('date', now())->count();
+        
+        $pendingAgreements = Agreement::where('status', '!=', 'realizado')->count();
+        $myPendingAgreements = Agreement::where('status', '!=', 'realizado')
+            ->where(function ($query) use ($user) {
+                $query->where('responsible_id', $user->id)
+                    ->orWhereHas('responsibles', fn($users) => $users->where('users.id', $user->id));
+            })
+            ->count();
+            
+        $completedAgreementsThisMonth = Agreement::where('status', 'realizado')
+            ->whereMonth('updated_at', now()->month)
+            ->count();
+
+        // Upcoming meetings
+        $upcomingMeetings = Meeting::with(['department', 'meetingType'])
+            ->where('date', '>=', now())
+            ->where('status', 'programada')
+            ->orderBy('date')
+            ->orderBy('start_time')
+            ->take(5)
+            ->get();
+
+        // Recent Agreements
+        $recentAgreements = Agreement::with(['responsible', 'responsibles', 'department'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $departmentStats = \App\Models\Department::withCount(['agreements as pending_count' => function($query) {
+            $query->where('status', '!=', 'realizado');
+        }])->get(['id', 'name']);
+
+        return Inertia::render('Dashboard', [
+            'stats' => [
+                'totalMeetings' => $totalMeetings,
+                'meetingsToday' => $meetingsToday,
+                'pendingAgreements' => $pendingAgreements,
+                'myPending' => $myPendingAgreements,
+                'completedMonthly' => $completedAgreementsThisMonth,
+            ],
+            'upcomingMeetings' => $upcomingMeetings,
+            'recentAgreements' => $recentAgreements,
+            'departmentStats' => $departmentStats
+        ]);
+    }
+}
