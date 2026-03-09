@@ -280,7 +280,7 @@ export default function Show({ auth, meeting, users }) {
 
                     {activeTab === 'despues' && (
                         <div className="flex flex-col items-center justify-center py-10">
-                            {meeting.minute ? (
+                            {meeting.minute?.status === 'published' ? (
                                 <div className="bento-card max-w-2xl w-full text-center py-16 px-10 border-success/30 bg-success/5">
                                     <div className="w-24 h-24 bg-success rounded-full flex items-center justify-center text-success-content mx-auto mb-8 shadow-2xl shadow-success/30">
                                         <CheckCircle size={48} strokeWidth={2.5} />
@@ -295,6 +295,17 @@ export default function Show({ auth, meeting, users }) {
                                             <Download size={20} /> PDF
                                         </a>
                                     </div>
+                                </div>
+                            ) : meeting.minute ? (
+                                <div className="bento-card max-w-2xl w-full text-center py-16 px-10 border-warning/30 bg-warning/5">
+                                    <div className="w-24 h-24 bg-warning rounded-full flex items-center justify-center text-warning-content mx-auto mb-8 shadow-2xl shadow-warning/30">
+                                        <FileText size={48} strokeWidth={2.5} />
+                                    </div>
+                                    <h3 className="text-3xl font-black tracking-tight mb-2 text-warning">Minuta en Borrador</h3>
+                                    <p className="text-base-content/60 font-medium mb-10">Puedes continuar editando y publicarla cuando esté completa.</p>
+                                    <Link href={route('meetings.minute.create', meeting.id)} className="btn btn-warning btn-lg rounded-3xl font-black px-12 uppercase tracking-widest shadow-xl shadow-warning/20">
+                                        Continuar Minuta <ChevronRight />
+                                    </Link>
                                 </div>
                             ) : (
                                 <div className="bento-card max-w-2xl w-full text-center py-16 px-10 border-primary/30 bg-primary/5">

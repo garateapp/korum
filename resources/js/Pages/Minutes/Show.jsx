@@ -4,6 +4,7 @@ import { IconArrowLeft, IconFileCheck, IconUsers, IconCalendar, IconClock, IconM
 
 export default function Show({ auth, minute }) {
     const meeting = minute.meeting;
+    const publishedAt = minute.published_at ? new Date(minute.published_at).toLocaleDateString() : 'Sin publicar';
 
     return (
         <AuthenticatedLayout header="Minuta de Reunión">
@@ -22,7 +23,7 @@ export default function Show({ auth, minute }) {
                         <p className="text-[12px] font-black tracking-[0.3em] text-primary uppercase">Documento de Minuta Oficial</p>
                         <span className="h-px w-8 bg-primary/30"></span>
                     </div>
-                    <p className="text-xs font-bold text-gray-400 uppercase">Versión {minute.version || '1.0'} • Publicado el {new Date(minute.published_at).toLocaleDateString()}</p>
+                    <p className="text-xs font-bold text-gray-400 uppercase">Versión {minute.version || '1.0'} • {minute.status === 'published' ? `Publicado el ${publishedAt}` : `Estado ${minute.status}`}</p>
                 </div>
             </div>
 

@@ -2,14 +2,36 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { IconArrowLeft, IconPlus, IconTrash, IconDeviceFloppy, IconFileDescription, IconCalendar, IconClock, IconUsers } from '@tabler/icons-react';
 
-export default function Create({ auth, meeting, users, departments }) {
-    const { data, setData, post, processing, errors } = useForm({
-        notes: '',
-        observations: '',
-        agreements: [],
-        decisions: [],
-        topics: [], // Added topics
+export default function Create({ auth, meeting, users, departments, minute = null }) {
+    const initialAgreements = minute?.agreements?.map((agreement) => ({
+        subject: agreement.subject ?? '',
+        responsible_ids: agreement.responsibles?.length
+            ? agreement.responsibles.map((responsible) => responsible.id)
+            : (agreement.responsible_id ? [agreement.responsible_id] : []),
+        commitment_date: agreement.commitment_date ?? '',
+        department_id: agreement.department_id ?? '',
+    })) ?? [];
+
+    const initialDecisions = minute?.decisions?.map((decision) => ({
+        description: decision.description ?? '',
+    })) ?? [];
+
+    const initialTopics = minute?.topics?.map((topic) => ({
+        title: topic.title ?? '',
+        detail: topic.detail ?? '',
+        conclusions: topic.conclusions ?? '',
+    })) ?? [];
+
+    const { data, setData, post, processing, errors, transform } = useForm({
+        notes: minute?.summary ?? '',
+        observations: minute?.general_observations ?? '',
+        agreements: initialAgreements,
+        decisions: initialDecisions,
+        topics: initialTopics,
+        action: 'draft',
     });
+
+    const isDraft = minute?.status === 'draft';
 
     const addTopic = () => {
         setData('topics', [
@@ -68,9 +90,17 @@ export default function Create({ auth, meeting, users, departments }) {
         setData('decisions', newDecisions);
     };
 
-    const submit = (e) => {
+    const submit = (e, action = 'publish') => {
         e.preventDefault();
-        post(route('meetings.minute.store', meeting.id));
+
+        transform((formData) => ({
+            ...formData,
+            action,
+        }));
+
+        post(route('meetings.minute.store', meeting.id), {
+            preserveScroll: true,
+        });
     };
 
     return (
@@ -81,13 +111,23 @@ export default function Create({ auth, meeting, users, departments }) {
                 <div>
                     <h2 className="text-2xl font-bold text-gray-800">Minuta de Reunión: {meeting.code}</h2>
                     <p className="text-sm text-gray-500">{meeting.subject}</p>
+                    {isDraft && (
+                        <p className="text-xs font-bold uppercase tracking-wider text-warning mt-1">
+                            Borrador guardado
+                        </p>
+                    )}
                 </div>
                 <Link href={route('meetings.show', meeting.id)} className="btn btn-ghost">
                     <IconArrowLeft size={20} /> Cancelar
                 </Link>
             </div>
 
-            <form onSubmit={submit} className="space-y-6 pb-20">
+            <form onSubmit={(e) => submit(e, 'publish')} className="space-y-6 pb-20">
+                {(errors.error || errors.action) && (
+                    <div className="alert alert-error">
+                        <span>{errors.error || errors.action}</span>
+                    </div>
+                )}
 
                 {/* Resumen e Información General */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -103,7 +143,6 @@ export default function Create({ auth, meeting, users, departments }) {
                                     placeholder="Describa los puntos principales discutidos..."
                                     value={data.notes}
                                     onChange={e => setData('notes', e.target.value)}
-                                    required
                                 ></textarea>
                                 {errors.notes && <span className="text-error text-sm mt-1">{errors.notes}</span>}
                             </div>
@@ -129,7 +168,6 @@ export default function Create({ auth, meeting, users, departments }) {
                                                     placeholder="Título del Tema (ej: Revisión de presupuesto)"
                                                     value={topic.title}
                                                     onChange={e => updateTopic(index, 'title', e.target.value)}
-                                                    required
                                                 />
                                                 <textarea
                                                     className="textarea textarea-bordered textarea-sm w-full h-20"
@@ -158,6 +196,11 @@ export default function Create({ auth, meeting, users, departments }) {
                                     <IconPlus size={16} /> Nuevo Acuerdo
                                 </button>
                             </div>
+                            {errors.agreements && (
+                                <div className="alert alert-warning mb-4">
+                                    <span>{errors.agreements}</span>
+                                </div>
+                            )}
 
                             {data.agreements.length > 0 ? (
                                 <div className="space-y-6">
@@ -178,7 +221,6 @@ export default function Create({ auth, meeting, users, departments }) {
                                                         className="input input-bordered input-sm"
                                                         value={agreement.subject}
                                                         onChange={e => updateAgreement(index, 'subject', e.target.value)}
-                                                        required
                                                     />
                                                 </div>
                                                 <div className="form-control md:col-span-2">
@@ -217,7 +259,6 @@ export default function Create({ auth, meeting, users, departments }) {
                                                         className="input input-bordered input-sm"
                                                         value={agreement.commitment_date}
                                                         onChange={e => updateAgreement(index, 'commitment_date', e.target.value)}
-                                                        required
                                                     />
                                                 </div>
                                                 <div className="form-control">
@@ -226,7 +267,6 @@ export default function Create({ auth, meeting, users, departments }) {
                                                         className="select select-bordered select-sm"
                                                         value={agreement.department_id}
                                                         onChange={e => updateAgreement(index, 'department_id', e.target.value)}
-                                                        required
                                                     >
                                                         <option value="">Seleccione...</option>
                                                         {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
@@ -263,7 +303,6 @@ export default function Create({ auth, meeting, users, departments }) {
                                             placeholder="Describa la decisión..."
                                             value={decision.description}
                                             onChange={e => updateDecision(index, e.target.value)}
-                                            required
                                         ></textarea>
                                         <button type="button" onClick={() => removeDecision(index)} className="btn btn-ghost btn-xs text-error">
                                             <IconTrash size={16} />
@@ -297,10 +336,19 @@ export default function Create({ auth, meeting, users, departments }) {
                 <div className="fixed bottom-0 left-0 right-0 bg-base-100 border-t p-4 z-50 flex justify-center lg:ml-72">
                     <div className="max-w-4xl w-full flex justify-between items-center px-4">
                         <div className="text-sm text-gray-500 hidden md:block">
-                            La minuta se marcará como <strong>Publicada</strong> y se bloqueará su edición posterior.
+                            Puedes guardar como <strong>borrador</strong> y publicar cuando esté completa.
                         </div>
                         <div className="flex gap-2 flex-1 md:flex-initial">
                             <Link href={route('meetings.show', meeting.id)} className="btn btn-ghost flex-1 md:flex-initial">Cancelar</Link>
+                            <button
+                                type="button"
+                                className="btn btn-outline flex-1 md:flex-initial"
+                                disabled={processing}
+                                onClick={(e) => submit(e, 'draft')}
+                            >
+                                {processing ? <span className="loading loading-spinner"></span> : <IconDeviceFloppy size={20} />}
+                                Guardar borrador
+                            </button>
                             <button type="submit" className="btn btn-primary flex-1 md:flex-initial" disabled={processing}>
                                 {processing ? <span className="loading loading-spinner"></span> : <IconDeviceFloppy size={20} />}
                                 Publicar Minuta

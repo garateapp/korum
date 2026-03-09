@@ -118,6 +118,32 @@
         </tbody>
     </table>
 
+    @if($meeting->minute->summary)
+    <div class="section-title">Resumen de la Reunión</div>
+    <div style="background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+        {!! nl2br(e($meeting->minute->summary)) !!}
+    </div>
+    @endif
+
+    @if($meeting->minute->topics->isNotEmpty())
+    <div class="section-title">Desarrollo y Temas</div>
+    @foreach($meeting->minute->topics->sortBy('order')->values() as $index => $topic)
+    <div style="margin-bottom: 14px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+        <p style="margin: 0 0 8px; font-weight: bold;">
+            {{ $index + 1 }}. {{ $topic->title ?: 'Tema de discusión' }}
+        </p>
+        @if($topic->detail)
+        <p style="margin: 0 0 8px;">{!! nl2br(e($topic->detail)) !!}</p>
+        @endif
+        @if($topic->conclusions)
+        <p style="margin: 0; background: #f0fdf4; border: 1px solid #dcfce7; border-radius: 6px; padding: 8px;">
+            <strong>Conclusión:</strong> {!! nl2br(e($topic->conclusions)) !!}
+        </p>
+        @endif
+    </div>
+    @endforeach
+    @endif
+
     <div class="section-title">Acuerdos y Compromisos</div>
     <table class="data">
         <thead>

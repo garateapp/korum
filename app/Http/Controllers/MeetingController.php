@@ -26,6 +26,12 @@ class MeetingController extends Controller
             ->visibleTo($userId)
             ->with(['organizer', 'department', 'meetingType']);
 
+        $allowedSortColumns = ['date', 'subject', 'status', 'code'];
+        $sortBy = in_array($request->input('sort_by'), $allowedSortColumns, true)
+            ? $request->input('sort_by')
+            : 'date';
+        $sortDirection = $request->input('sort_dir') === 'asc' ? 'asc' : 'desc';
+
         // Default: exclude cancelled meetings
         if (!$request->boolean('show_cancelled')) {
             $query->where('status', '!=', 'cancelada');
@@ -39,18 +45,27 @@ class MeetingController extends Controller
             });
         }
 
+        if ($sortBy === 'date') {
+            $query->orderBy('date', $sortDirection)
+                ->orderBy('start_time', $sortDirection);
+        } else {
+            $query->orderBy($sortBy, $sortDirection)
+                ->orderBy('date', 'desc')
+                ->orderBy('start_time', 'desc');
+        }
+
         // For calendar view, we might want all meetings (or a specific range)
         if ($request->get('view') === 'calendar') {
-            $meetings = $query->latest('date')->get();
+            $meetings = $query->get();
         } else {
-            $meetings = $query->latest('date')
+            $meetings = $query
                 ->paginate(10)
                 ->withQueryString();
         }
             
         return Inertia::render('Meetings/Index', [
             'meetings' => $meetings,
-            'filters' => $request->only(['search', 'show_cancelled', 'view']),
+            'filters' => $request->only(['search', 'show_cancelled', 'view', 'sort_by', 'sort_dir']),
             'googleCalendar' => [
                 'connected' => (bool) $request->user()?->google_refresh_token,
                 'connected_at' => $request->user()?->google_calendar_connected_at?->toISOString(),

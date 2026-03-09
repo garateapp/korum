@@ -15,7 +15,8 @@ import {
     IconFilter,
     IconX,
     IconBrandGoogle,
-    IconRefresh
+    IconRefresh,
+    IconSearch
 } from '@tabler/icons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import dayjs from 'dayjs';
@@ -26,26 +27,49 @@ dayjs.locale('es');
 export default function Index({ auth, meetings, filters, googleCalendar }) {
     const [viewMode, setViewMode] = useState(filters.view || 'list');
     const [showCancelled, setShowCancelled] = useState(filters.show_cancelled === 'true');
+    const [searchTerm, setSearchTerm] = useState(filters.search || '');
+    const [sortBy, setSortBy] = useState(filters.sort_by || 'date');
+    const [sortDir, setSortDir] = useState(filters.sort_dir || 'desc');
     const [currentDate, setCurrentDate] = useState(dayjs());
     const [syncingGoogle, setSyncingGoogle] = useState(false);
+
+    const visitWithFilters = (overrides = {}) => {
+        router.get(route('meetings.index'), {
+            ...filters,
+            search: searchTerm,
+            sort_by: sortBy,
+            sort_dir: sortDir,
+            show_cancelled: showCancelled,
+            view: viewMode,
+            ...overrides,
+        }, { preserveState: true, preserveScroll: true });
+    };
 
     const toggleCancelled = () => {
         const newValue = !showCancelled;
         setShowCancelled(newValue);
-        router.get(route('meetings.index'), {
-            ...filters,
-            show_cancelled: newValue,
-            view: viewMode
-        }, { preserveState: true, preserveScroll: true });
+        visitWithFilters({ show_cancelled: newValue });
     };
 
     const switchView = (mode) => {
         setViewMode(mode);
-        router.get(route('meetings.index'), {
-            ...filters,
-            view: mode,
-            show_cancelled: showCancelled
-        }, { preserveState: true, preserveScroll: true });
+        visitWithFilters({ view: mode });
+    };
+
+    const submitSearch = (e) => {
+        e.preventDefault();
+        visitWithFilters({ search: searchTerm, page: 1 });
+    };
+
+    const clearSearch = () => {
+        setSearchTerm('');
+        visitWithFilters({ search: '', page: 1 });
+    };
+
+    const updateSort = (newSortBy, newSortDir = sortDir) => {
+        setSortBy(newSortBy);
+        setSortDir(newSortDir);
+        visitWithFilters({ sort_by: newSortBy, sort_dir: newSortDir, page: 1 });
     };
 
     const syncGoogleCalendar = () => {
@@ -146,6 +170,49 @@ export default function Index({ auth, meetings, filters, googleCalendar }) {
                     <Link href={route('meetings.create')} className="btn btn-primary rounded-2xl shadow-lg shadow-primary/20 gap-2 flex-1 md:flex-none">
                         <IconPlus size={20} /> <span className="font-black italic">NUEVA REUNIÓN</span>
                     </Link>
+                </div>
+            </div>
+
+            <div className="mb-6 flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
+                <form onSubmit={submitSearch} className="flex-1 flex items-center gap-2 bg-white border border-base-200 rounded-2xl p-2 shadow-sm">
+                    <IconSearch size={18} className="opacity-40 ml-1" />
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Buscar por código, asunto o descripción..."
+                        className="input input-sm input-ghost w-full focus:outline-none"
+                    />
+                    {searchTerm && (
+                        <button type="button" onClick={clearSearch} className="btn btn-ghost btn-sm btn-circle" title="Limpiar búsqueda">
+                            <IconX size={16} />
+                        </button>
+                    )}
+                    <button type="submit" className="btn btn-sm btn-primary rounded-xl px-4">
+                        Buscar
+                    </button>
+                </form>
+
+                <div className="flex items-center gap-2 bg-white border border-base-200 rounded-2xl p-2 shadow-sm">
+                    <span className="text-[10px] font-black uppercase tracking-widest opacity-50 px-2">Orden</span>
+                    <select
+                        value={sortBy}
+                        onChange={(e) => updateSort(e.target.value)}
+                        className="select select-bordered select-sm rounded-xl"
+                    >
+                        <option value="date">Fecha</option>
+                        <option value="subject">Asunto</option>
+                        <option value="status">Estado</option>
+                        <option value="code">Código</option>
+                    </select>
+                    <select
+                        value={sortDir}
+                        onChange={(e) => updateSort(sortBy, e.target.value)}
+                        className="select select-bordered select-sm rounded-xl"
+                    >
+                        <option value="desc">Descendente</option>
+                        <option value="asc">Ascendente</option>
+                    </select>
                 </div>
             </div>
 
