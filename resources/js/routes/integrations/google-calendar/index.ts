@@ -43,8 +43,51 @@ connect.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\GoogleCalendarController::forceConsent
+ * @see app/Http/Controllers/GoogleCalendarController.php:22
+ * @route '/integrations/google-calendar/force-consent'
+ */
+export const forceConsent = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: forceConsent.url(options),
+    method: 'get',
+})
+
+forceConsent.definition = {
+    methods: ["get","head"],
+    url: '/integrations/google-calendar/force-consent',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\GoogleCalendarController::forceConsent
+ * @see app/Http/Controllers/GoogleCalendarController.php:22
+ * @route '/integrations/google-calendar/force-consent'
+ */
+forceConsent.url = (options?: RouteQueryOptions) => {
+    return forceConsent.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\GoogleCalendarController::forceConsent
+ * @see app/Http/Controllers/GoogleCalendarController.php:22
+ * @route '/integrations/google-calendar/force-consent'
+ */
+forceConsent.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: forceConsent.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\GoogleCalendarController::forceConsent
+ * @see app/Http/Controllers/GoogleCalendarController.php:22
+ * @route '/integrations/google-calendar/force-consent'
+ */
+forceConsent.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: forceConsent.url(options),
+    method: 'head',
+})
+
+/**
 * @see \App\Http\Controllers\GoogleCalendarController::callback
- * @see app/Http/Controllers/GoogleCalendarController.php:21
+ * @see app/Http/Controllers/GoogleCalendarController.php:28
  * @route '/integrations/google-calendar/callback'
  */
 export const callback = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -59,7 +102,7 @@ callback.definition = {
 
 /**
 * @see \App\Http\Controllers\GoogleCalendarController::callback
- * @see app/Http/Controllers/GoogleCalendarController.php:21
+ * @see app/Http/Controllers/GoogleCalendarController.php:28
  * @route '/integrations/google-calendar/callback'
  */
 callback.url = (options?: RouteQueryOptions) => {
@@ -68,7 +111,7 @@ callback.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\GoogleCalendarController::callback
- * @see app/Http/Controllers/GoogleCalendarController.php:21
+ * @see app/Http/Controllers/GoogleCalendarController.php:28
  * @route '/integrations/google-calendar/callback'
  */
 callback.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -77,7 +120,7 @@ callback.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\GoogleCalendarController::callback
- * @see app/Http/Controllers/GoogleCalendarController.php:21
+ * @see app/Http/Controllers/GoogleCalendarController.php:28
  * @route '/integrations/google-calendar/callback'
  */
 callback.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -87,7 +130,7 @@ callback.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\GoogleCalendarController::sync
- * @see app/Http/Controllers/GoogleCalendarController.php:36
+ * @see app/Http/Controllers/GoogleCalendarController.php:44
  * @route '/integrations/google-calendar/sync'
  */
 export const sync = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -102,7 +145,7 @@ sync.definition = {
 
 /**
 * @see \App\Http\Controllers\GoogleCalendarController::sync
- * @see app/Http/Controllers/GoogleCalendarController.php:36
+ * @see app/Http/Controllers/GoogleCalendarController.php:44
  * @route '/integrations/google-calendar/sync'
  */
 sync.url = (options?: RouteQueryOptions) => {
@@ -111,7 +154,7 @@ sync.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\GoogleCalendarController::sync
- * @see app/Http/Controllers/GoogleCalendarController.php:36
+ * @see app/Http/Controllers/GoogleCalendarController.php:44
  * @route '/integrations/google-calendar/sync'
  */
 sync.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -120,6 +163,7 @@ sync.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 })
 const googleCalendar = {
     connect: Object.assign(connect, connect),
+forceConsent: Object.assign(forceConsent, forceConsent),
 callback: Object.assign(callback, callback),
 sync: Object.assign(sync, sync),
 }

@@ -137,9 +137,9 @@ export default function Index({ auth, meetings, filters, googleCalendar }) {
                             </span>
                         </div>
                     ) : (
-                        <Link href={route('integrations.google-calendar.connect')} className="btn btn-sm btn-outline rounded-2xl gap-2">
+                        <Link href={route('integrations.google-calendar.force-consent', { return_to: '/meetings' })} className="btn btn-sm btn-outline rounded-2xl gap-2">
                             <IconBrandGoogle size={16} />
-                            <span className="font-black text-[10px] uppercase tracking-widest">Conectar Google</span>
+                            <span className="font-black text-[10px] uppercase tracking-widest">Forzar Permiso Google</span>
                         </Link>
                     )}
 

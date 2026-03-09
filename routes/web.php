@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('meetings', MeetingController::class);
     Route::patch('meetings/{meeting}/cancel', [MeetingController::class, 'cancel'])->name('meetings.cancel');
     Route::get('integrations/google-calendar/connect', [GoogleCalendarController::class, 'connect'])->name('integrations.google-calendar.connect');
+    Route::get('integrations/google-calendar/force-consent', [GoogleCalendarController::class, 'forceConsent'])->name('integrations.google-calendar.force-consent');
     Route::get('integrations/google-calendar/callback', [GoogleCalendarController::class, 'callback'])->name('integrations.google-calendar.callback');
     Route::post('integrations/google-calendar/sync', [GoogleCalendarController::class, 'sync'])->name('integrations.google-calendar.sync');
     Route::post('meetings/{meeting}/agenda', [MeetingAgendaController::class, 'store'])->name('meetings.agenda.store');

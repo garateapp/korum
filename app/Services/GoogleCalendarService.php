@@ -19,15 +19,18 @@ class GoogleCalendarService
     private const CALENDAR_SCOPE = 'https://www.googleapis.com/auth/calendar.events';
     private const CALENDAR_BASE_URL = 'https://www.googleapis.com/calendar/v3/calendars/primary/events';
 
-    public function redirectToAuthorization(): RedirectResponse
+    public function redirectToAuthorization(bool $forceConsent = false): RedirectResponse
     {
+        $prompt = $forceConsent ? 'consent select_account' : 'consent';
+
         return Socialite::driver('google')
             ->redirectUrl($this->getCalendarRedirectUri())
             ->scopes(['openid', 'profile', 'email', self::CALENDAR_SCOPE])
             ->with([
                 'access_type' => 'offline',
-                'prompt' => 'consent',
+                'prompt' => $prompt,
                 'include_granted_scopes' => 'true',
+                'approval_prompt' => $forceConsent ? 'force' : 'auto',
             ])
             ->redirect();
     }

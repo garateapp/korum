@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../wayfinder'
 /**
- * @see routes/web.php:62
+ * @see routes/web.php:63
  * @route '/notifications/mark-read'
  */
 export const markRead = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -14,7 +14,7 @@ markRead.definition = {
 } satisfies RouteDefinition<["post"]>
 
 /**
- * @see routes/web.php:62
+ * @see routes/web.php:63
  * @route '/notifications/mark-read'
  */
 markRead.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ markRead.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:62
+ * @see routes/web.php:63
  * @route '/notifications/mark-read'
  */
 markRead.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
