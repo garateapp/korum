@@ -146,6 +146,7 @@ class GoogleCalendarService
 
             $meeting->save();
             foreach ($event['attendees'] ?? [] as $attendee) {
+                try{
                 User::firstOrCreate([
                     'email' => (string) $attendee['email'],
                     'name' => (string) $attendee['displayName'] ?? '',
@@ -155,6 +156,9 @@ class GoogleCalendarService
                 $meeting->participants()->updateOrCreate([
                     'user_id' => User::where('email', (string) $attendee['email'])->value('id'),
                 ]);
+                }catch (\Exception $e){
+                    Log::error($e->getMessage());
+                }
 
             }
             $stats[$isNew ? 'created' : 'updated']++;

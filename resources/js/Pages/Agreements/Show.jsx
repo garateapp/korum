@@ -187,7 +187,7 @@ export default function Show({ auth, agreement }) {
                     {/* Documentos de Evidencia */}
 
 
-                    <div className="bento-card sticky top-28 bg-primary/5 border-primary/20 backdrop-blur-md">
+                    <div className="bento-card sticky bottom-28 bg-primary/5 border-primary/20 backdrop-blur-md">
                         <h3 className="text-xl font-black mb-6 flex items-center gap-3">
                             <Plus size={24} className="text-primary" /> Nuevo Avance
                         </h3>
