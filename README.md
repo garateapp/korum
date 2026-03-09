@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/img/logo-korum.png" alt="Korum Logo" width="180">
+</p>
+
 # Korum
 
 Korum es una plataforma web para gestionar reuniones, minutas y compromisos con trazabilidad completa.
