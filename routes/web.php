@@ -9,6 +9,7 @@ use App\Http\Controllers\AgreementController;
 use App\Http\Controllers\AgreementUpdateController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\MinuteExportController;
+use App\Http\Controllers\GoogleCalendarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchController;
 use Illuminate\Foundation\Application;
@@ -34,6 +35,9 @@ Route::middleware('auth')->group(function () {
     // Meetings
     Route::resource('meetings', MeetingController::class);
     Route::patch('meetings/{meeting}/cancel', [MeetingController::class, 'cancel'])->name('meetings.cancel');
+    Route::get('integrations/google-calendar/connect', [GoogleCalendarController::class, 'connect'])->name('integrations.google-calendar.connect');
+    Route::get('integrations/google-calendar/callback', [GoogleCalendarController::class, 'callback'])->name('integrations.google-calendar.callback');
+    Route::post('integrations/google-calendar/sync', [GoogleCalendarController::class, 'sync'])->name('integrations.google-calendar.sync');
     Route::post('meetings/{meeting}/agenda', [MeetingAgendaController::class, 'store'])->name('meetings.agenda.store');
     Route::delete('meetings/{meeting}/agenda/{agendaItem}', [MeetingAgendaController::class, 'destroy'])->name('meetings.agenda.destroy');
     

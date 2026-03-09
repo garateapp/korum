@@ -5,12 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Meeting;
 use App\Models\Department;
 use App\Models\MeetingType;
+use App\Services\GoogleCalendarService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Throwable;
 
 class MeetingController extends Controller
 {
+    public function __construct(private readonly GoogleCalendarService $googleCalendarService)
+    {
+    }
+
     public function index(Request $request)
     {
         $query = Meeting::with(['organizer', 'department', 'meetingType']);
@@ -39,7 +45,12 @@ class MeetingController extends Controller
             
         return Inertia::render('Meetings/Index', [
             'meetings' => $meetings,
-            'filters' => $request->only(['search', 'show_cancelled', 'view'])
+            'filters' => $request->only(['search', 'show_cancelled', 'view']),
+            'googleCalendar' => [
+                'connected' => (bool) $request->user()?->google_refresh_token,
+                'connected_at' => $request->user()?->google_calendar_connected_at?->toISOString(),
+                'last_synced_at' => $request->user()?->google_calendar_synced_at?->toISOString(),
+            ],
         ]);
     }
 
@@ -70,9 +81,16 @@ class MeetingController extends Controller
         $validated['status'] = 'programada';
 
         $meeting = Meeting::create($validated);
+        $syncError = $this->syncMeetingToGoogle($meeting);
 
-        return redirect()->route('meetings.show', $meeting->id)
+        $redirect = redirect()->route('meetings.show', $meeting->id)
             ->with('success', 'Reunión creada exitosamente.');
+
+        if ($syncError) {
+            $redirect->with('error', $syncError);
+        }
+
+        return $redirect;
     }
 
     public function show(Meeting $meeting)
@@ -110,23 +128,75 @@ class MeetingController extends Controller
         ]);
 
         $meeting->update($validated);
+        $syncError = $this->syncMeetingToGoogle($meeting->fresh());
 
-        return redirect()->route('meetings.show', $meeting->id)
+        $redirect = redirect()->route('meetings.show', $meeting->id)
             ->with('success', 'Reunión actualizada exitosamente.');
+
+        if ($syncError) {
+            $redirect->with('error', $syncError);
+        }
+
+        return $redirect;
     }
 
     public function destroy(Meeting $meeting)
     {
+        $syncError = $this->cancelMeetingInGoogle($meeting);
         $meeting->delete();
 
-        return redirect()->route('meetings.index')
+        $redirect = redirect()->route('meetings.index')
             ->with('success', 'Reunión eliminada exitosamente.');
+
+        if ($syncError) {
+            $redirect->with('error', $syncError);
+        }
+
+        return $redirect;
     }
 
     public function cancel(Meeting $meeting)
     {
         $meeting->update(['status' => 'cancelada']);
+        $syncError = $this->cancelMeetingInGoogle($meeting->fresh());
 
-        return back()->with('success', 'Reunión cancelada exitosamente.');
+        $redirect = back()->with('success', 'Reunión cancelada exitosamente.');
+        if ($syncError) {
+            $redirect->with('error', $syncError);
+        }
+
+        return $redirect;
+    }
+
+    private function syncMeetingToGoogle(Meeting $meeting): ?string
+    {
+        $organizer = $meeting->organizer()->first();
+        if (!$organizer || !$this->googleCalendarService->hasConnectedCalendar($organizer)) {
+            return null;
+        }
+
+        try {
+            $this->googleCalendarService->upsertEventFromMeeting($organizer, $meeting);
+            return null;
+        } catch (Throwable $exception) {
+            report($exception);
+            return 'La reunión se guardó en Korum, pero no se pudo sincronizar con Google Calendar.';
+        }
+    }
+
+    private function cancelMeetingInGoogle(Meeting $meeting): ?string
+    {
+        $organizer = $meeting->organizer()->first();
+        if (!$organizer || !$this->googleCalendarService->hasConnectedCalendar($organizer)) {
+            return null;
+        }
+
+        try {
+            $this->googleCalendarService->cancelEventForMeeting($organizer, $meeting);
+            return null;
+        } catch (Throwable $exception) {
+            report($exception);
+            return 'La reunión se guardó en Korum, pero no se pudo cancelar en Google Calendar.';
+        }
     }
 }

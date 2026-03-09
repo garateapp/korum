@@ -84,6 +84,7 @@ Ese comando inicia servidor web, worker de cola, logs con Pail y Vite en paralel
 - `QUEUE_CONNECTION` (recomendado: `database`)
 - `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM_ADDRESS`
 - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`
+- `GOOGLE_CALENDAR_REDIRECT_URI`
 
 ## Colas y tareas programadas
 
@@ -98,9 +99,11 @@ Comandos útiles:
 php artisan queue:listen --tries=1 --timeout=0
 php artisan schedule:work
 php artisan app:check-deadlines
+php artisan app:sync-google-calendar
 ```
 
 La tarea `app:check-deadlines` se agenda diariamente a las `08:00` y notifica acuerdos con vencimiento en 2 días.
+La tarea `app:sync-google-calendar` se agenda cada hora para importar reuniones futuras desde Google Calendar.
 
 ## Estructura funcional del dominio
 
@@ -122,8 +125,27 @@ npm run build
 ## Notas de operación
 
 - El login con Google requiere configurar las credenciales OAuth en `.env`.
+- La integración con Google Calendar es bidireccional:
+  - Google -> Korum: importa reuniones desde `primary`.
+  - Korum -> Google: crea/actualiza/cancela eventos cuando gestionas reuniones en Korum.
+- La conexión usa scope de escritura de eventos (`calendar.events`). Si ya estabas conectado con permisos antiguos, reconecta la cuenta.
 - La exportación PDF de minutas usa la vista `resources/views/pdf/minute.blade.php`.
 - Los adjuntos se guardan en `storage/app/public/attachments/*` con límite de 10 MB por archivo.
+
+## Setup Google Calendar
+
+1. En Google Cloud Console habilita **Google Calendar API**.
+2. Configura credenciales OAuth y agrega redirects autorizados:
+   - `${APP_URL}/auth/google/callback`
+   - `${APP_URL}/integrations/google-calendar/callback`
+3. Completa en `.env`: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, `GOOGLE_CALENDAR_REDIRECT_URI`.
+4. Ejecuta migraciones:
+
+```bash
+php artisan migrate
+```
+
+5. En Korum entra a **Reuniones**, presiona **Conectar Google** y luego **Sincronizar Google**.
 
 ## Seguridad
 

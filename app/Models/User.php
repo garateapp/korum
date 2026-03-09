@@ -23,6 +23,11 @@ class User extends Authenticatable
         'email',
         'google_id',
         'avatar',
+        'google_access_token',
+        'google_refresh_token',
+        'google_token_expires_at',
+        'google_calendar_connected_at',
+        'google_calendar_synced_at',
         'password',
         'department_id',
     ];
@@ -35,6 +40,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'google_access_token',
+        'google_refresh_token',
     ];
 
     /**
@@ -46,11 +53,17 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'google_access_token' => 'encrypted',
+            'google_refresh_token' => 'encrypted',
+            'google_token_expires_at' => 'datetime',
+            'google_calendar_connected_at' => 'datetime',
+            'google_calendar_synced_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
 
-public function department() {
+    public function department()
+    {
         return $this->belongsTo(Department::class);
     }
 }

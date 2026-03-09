@@ -13,7 +13,9 @@ import {
     IconChevronLeft,
     IconChevronRight,
     IconFilter,
-    IconX
+    IconX,
+    IconBrandGoogle,
+    IconRefresh
 } from '@tabler/icons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import dayjs from 'dayjs';
@@ -21,10 +23,11 @@ import 'dayjs/locale/es';
 
 dayjs.locale('es');
 
-export default function Index({ auth, meetings, filters }) {
+export default function Index({ auth, meetings, filters, googleCalendar }) {
     const [viewMode, setViewMode] = useState(filters.view || 'list');
     const [showCancelled, setShowCancelled] = useState(filters.show_cancelled === 'true');
     const [currentDate, setCurrentDate] = useState(dayjs());
+    const [syncingGoogle, setSyncingGoogle] = useState(false);
 
     const toggleCancelled = () => {
         const newValue = !showCancelled;
@@ -43,6 +46,14 @@ export default function Index({ auth, meetings, filters }) {
             view: mode,
             show_cancelled: showCancelled
         }, { preserveState: true, preserveScroll: true });
+    };
+
+    const syncGoogleCalendar = () => {
+        router.post(route('integrations.google-calendar.sync'), {}, {
+            preserveScroll: true,
+            onStart: () => setSyncingGoogle(true),
+            onFinish: () => setSyncingGoogle(false),
+        });
     };
 
     // Calendar Logic
@@ -108,6 +119,29 @@ export default function Index({ auth, meetings, filters }) {
                             />
                         </label>
                     </div>
+
+                    {googleCalendar?.connected ? (
+                        <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-2xl border border-base-200 shadow-sm">
+                            <button
+                                onClick={syncGoogleCalendar}
+                                disabled={syncingGoogle}
+                                className="btn btn-sm btn-outline btn-primary rounded-xl gap-2"
+                            >
+                                <IconRefresh size={16} className={syncingGoogle ? 'animate-spin' : ''} />
+                                <span>{syncingGoogle ? 'Sincronizando...' : 'Sincronizar Google'}</span>
+                            </button>
+                            <span className="text-[10px] font-black uppercase tracking-widest opacity-40 whitespace-nowrap">
+                                {googleCalendar.last_synced_at
+                                    ? `Última sync: ${dayjs(googleCalendar.last_synced_at).format('DD/MM HH:mm')}`
+                                    : 'Conectado'}
+                            </span>
+                        </div>
+                    ) : (
+                        <Link href={route('integrations.google-calendar.connect')} className="btn btn-sm btn-outline rounded-2xl gap-2">
+                            <IconBrandGoogle size={16} />
+                            <span className="font-black text-[10px] uppercase tracking-widest">Conectar Google</span>
+                        </Link>
+                    )}
 
                     <Link href={route('meetings.create')} className="btn btn-primary rounded-2xl shadow-lg shadow-primary/20 gap-2 flex-1 md:flex-none">
                         <IconPlus size={20} /> <span className="font-black italic">NUEVA REUNIÓN</span>

@@ -1,6 +1,7 @@
 import DashboardController from './DashboardController'
 import ProfileController from './ProfileController'
 import MeetingController from './MeetingController'
+import GoogleCalendarController from './GoogleCalendarController'
 import MeetingAgendaController from './MeetingAgendaController'
 import MeetingParticipantController from './MeetingParticipantController'
 import MeetingMinuteController from './MeetingMinuteController'
@@ -15,6 +16,7 @@ const Controllers = {
     DashboardController: Object.assign(DashboardController, DashboardController),
 ProfileController: Object.assign(ProfileController, ProfileController),
 MeetingController: Object.assign(MeetingController, MeetingController),
+GoogleCalendarController: Object.assign(GoogleCalendarController, GoogleCalendarController),
 MeetingAgendaController: Object.assign(MeetingAgendaController, MeetingAgendaController),
 MeetingParticipantController: Object.assign(MeetingParticipantController, MeetingParticipantController),
 MeetingMinuteController: Object.assign(MeetingMinuteController, MeetingMinuteController),

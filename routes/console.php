@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('app:check-deadlines')->dailyAt('08:00');
+Schedule::command('app:sync-google-calendar')->hourly();
