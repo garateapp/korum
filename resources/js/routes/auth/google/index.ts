@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Auth\GoogleAuthController::redirect
- * @see app/Http/Controllers/Auth/GoogleAuthController.php:17
+ * @see app/Http/Controllers/Auth/GoogleAuthController.php:20
  * @route '/auth/google/redirect'
  */
 export const redirect = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ redirect.definition = {
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleAuthController::redirect
- * @see app/Http/Controllers/Auth/GoogleAuthController.php:17
+ * @see app/Http/Controllers/Auth/GoogleAuthController.php:20
  * @route '/auth/google/redirect'
  */
 redirect.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ redirect.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleAuthController::redirect
- * @see app/Http/Controllers/Auth/GoogleAuthController.php:17
+ * @see app/Http/Controllers/Auth/GoogleAuthController.php:20
  * @route '/auth/google/redirect'
  */
 redirect.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ redirect.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Auth\GoogleAuthController::redirect
- * @see app/Http/Controllers/Auth/GoogleAuthController.php:17
+ * @see app/Http/Controllers/Auth/GoogleAuthController.php:20
  * @route '/auth/google/redirect'
  */
 redirect.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ redirect.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleAuthController::callback
- * @see app/Http/Controllers/Auth/GoogleAuthController.php:24
+ * @see app/Http/Controllers/Auth/GoogleAuthController.php:32
  * @route '/auth/google/callback'
  */
 export const callback = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -59,7 +59,7 @@ callback.definition = {
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleAuthController::callback
- * @see app/Http/Controllers/Auth/GoogleAuthController.php:24
+ * @see app/Http/Controllers/Auth/GoogleAuthController.php:32
  * @route '/auth/google/callback'
  */
 callback.url = (options?: RouteQueryOptions) => {
@@ -68,7 +68,7 @@ callback.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleAuthController::callback
- * @see app/Http/Controllers/Auth/GoogleAuthController.php:24
+ * @see app/Http/Controllers/Auth/GoogleAuthController.php:32
  * @route '/auth/google/callback'
  */
 callback.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -77,7 +77,7 @@ callback.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Auth\GoogleAuthController::callback
- * @see app/Http/Controllers/Auth/GoogleAuthController.php:24
+ * @see app/Http/Controllers/Auth/GoogleAuthController.php:32
  * @route '/auth/google/callback'
  */
 callback.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
