@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Services\GoogleCalendarService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class GoogleCalendarController extends Controller
@@ -13,16 +15,16 @@ class GoogleCalendarController extends Controller
     {
     }
 
-    public function connect(Request $request): RedirectResponse
+    public function connect(Request $request): Response
     {
         $this->storeReturnToInSession($request);
-        return $this->googleCalendarService->redirectToAuthorization();
+        return $this->redirectToGoogle($request, forceConsent: false);
     }
 
-    public function forceConsent(Request $request): RedirectResponse
+    public function forceConsent(Request $request): Response
     {
         $this->storeReturnToInSession($request);
-        return $this->googleCalendarService->redirectToAuthorization(forceConsent: true);
+        return $this->redirectToGoogle($request, forceConsent: true);
     }
 
     public function callback(Request $request): RedirectResponse
@@ -66,5 +68,16 @@ class GoogleCalendarController extends Controller
         }
 
         $request->session()->put('google_calendar_return_to', $returnTo);
+    }
+
+    private function redirectToGoogle(Request $request, bool $forceConsent): Response
+    {
+        $redirect = $this->googleCalendarService->redirectToAuthorization($forceConsent);
+
+        if ($request->header('X-Inertia')) {
+            return Inertia::location($redirect->getTargetUrl());
+        }
+
+        return $redirect;
     }
 }

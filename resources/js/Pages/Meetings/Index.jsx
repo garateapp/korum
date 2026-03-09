@@ -137,10 +137,10 @@ export default function Index({ auth, meetings, filters, googleCalendar }) {
                             </span>
                         </div>
                     ) : (
-                        <Link href={route('integrations.google-calendar.force-consent', { return_to: '/meetings' })} className="btn btn-sm btn-outline rounded-2xl gap-2">
+                        <a href={route('integrations.google-calendar.force-consent', { return_to: '/meetings' })} className="btn btn-sm btn-outline rounded-2xl gap-2">
                             <IconBrandGoogle size={16} />
                             <span className="font-black text-[10px] uppercase tracking-widest">Forzar Permiso Google</span>
-                        </Link>
+                        </a>
                     )}
 
                     <Link href={route('meetings.create')} className="btn btn-primary rounded-2xl shadow-lg shadow-primary/20 gap-2 flex-1 md:flex-none">

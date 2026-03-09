@@ -94,12 +94,12 @@ export default function Show({ auth, meeting, users }) {
                     <p className="text-sm font-bold opacity-40 uppercase tracking-widest mt-2">{meeting.code} • {meeting.department?.name}</p>
                 </div>
                 <div className="flex gap-3">
-                    <Link
+                    <a
                         href={route('integrations.google-calendar.force-consent', { return_to: `/meetings/${meeting.id}` })}
                         className="btn btn-outline border-warning text-warning rounded-2xl"
                     >
                         <AlertCircle size={18} /> Forzar permiso Google
-                    </Link>
+                    </a>
                     <Link href={route('meetings.index')} className="btn btn-ghost border-base-300 rounded-2xl group">
                         <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> Listado
                     </Link>
