@@ -37,9 +37,26 @@ export default function Show({ auth, meeting, users }) {
     const [activeTab, setActiveTab] = useState('antes'); // antes, durante, despues
     const [agendaModal, setAgendaModal] = useState(false);
     const [participantModal, setParticipantModal] = useState(false);
+    const participants = meeting.participants ?? [];
 
     const agendaForm = useForm({ title: '', description: '', speaker_id: '', estimated_time_min: 15 });
     const participantForm = useForm({ user_id: '', external_name: '', role_in_meeting: 'Asistente' });
+
+    const getParticipantName = (participant) => {
+        const internalName = participant.user?.name?.trim();
+        if (internalName) {
+            return internalName;
+        }
+
+        const externalName = participant.external_name?.trim();
+        if (externalName) {
+            return externalName;
+        }
+
+        return participant.user?.email || participant.external_email || 'Sin nombre';
+    };
+
+    const getParticipantInitial = (participant) => getParticipantName(participant).charAt(0).toUpperCase();
 
     const addAgendaItem = (e) => {
         e.preventDefault();
@@ -206,18 +223,18 @@ export default function Show({ auth, meeting, users }) {
                                         <h3 className="text-xl font-black flex items-center gap-2"><Users className="text-primary" /> Invitados</h3>
                                         <button onClick={() => setParticipantModal(true)} className="btn btn-ghost btn-sm btn-circle"><Plus size={18} /></button>
                                     </div>
-                                    {meeting.participants?.length > 0 ? (
+                                    {participants.length > 0 ? (
                                         <div className="space-y-4">
-                                            {meeting.participants.map(p => (
+                                            {participants.map(p => (
                                                 <div key={p.id} className="flex items-center justify-between p-3 bg-base-200 rounded-2xl border border-transparent hover:border-primary/10 group transition-all">
                                                     <div className="flex items-center gap-3">
                                                         <div className="avatar placeholder">
                                                             <div className="bg-primary/20 text-primary rounded-xl w-9 font-bold text-xs uppercase">
-                                                                {p.user ? p.user.name.charAt(0) : p.external_name.charAt(0)}
+                                                                {getParticipantInitial(p)}
                                                             </div>
                                                         </div>
                                                         <div>
-                                                            <p className="text-xs font-black leading-none mb-1">{p.user?.name || p.external_name}</p>
+                                                            <p className="text-xs font-black leading-none mb-1">{getParticipantName(p)}</p>
                                                             <p className="text-[9px] font-bold opacity-30 uppercase tracking-widest">{p.role_in_meeting || 'Asistente'}</p>
                                                         </div>
                                                     </div>
@@ -245,14 +262,14 @@ export default function Show({ auth, meeting, users }) {
                             <div className="lg:col-span-2 bento-card">
                                 <h3 className="text-xl font-black mb-8 flex items-center gap-2"><PlayCircle className="text-secondary" /> Control de Asistencia</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {meeting.participants.map(p => (
+                                    {participants.map(p => (
                                         <div key={p.id} className="p-4 rounded-3xl bg-base-200 border border-base-300 flex flex-col gap-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="avatar placeholder">
-                                                    <div className="bg-base-300 rounded-xl w-10 text-xs font-bold">{p.user?.name?.charAt(0) || p.external_name?.charAt(0)}</div>
+                                                    <div className="bg-base-300 rounded-xl w-10 text-xs font-bold">{getParticipantInitial(p)}</div>
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-black">{p.user?.name || p.external_name}</p>
+                                                    <p className="text-sm font-black">{getParticipantName(p)}</p>
                                                     <p className="text-[10px] opacity-40 uppercase font-black">{p.attendance_status || 'Sin marcar'}</p>
                                                 </div>
                                             </div>

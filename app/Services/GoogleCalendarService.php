@@ -146,32 +146,42 @@ class GoogleCalendarService
 
             $meeting->save();
             foreach ($event['attendees'] ?? [] as $attendee) {
-                try{
-                $user=USer::where('email', (string) $attendee['email'])->first();
-                if (!$user) {
-                User::firstOrCreate([
-                    'email' => (string) $attendee['email'],
-                    'name' => (string) $attendee['displayName'] ?? '',
-                    'status' => 'active',
-                    'password'=> bcrypt(Str::random(8)),
-                ]);
+                try {
+                    $attendeeEmail = (string) data_get($attendee, 'email', '');
+                    if ($attendeeEmail === '') {
+                        continue;
+                    }
 
-                $meeting->participants()->updateOrCreate([
-                    'user_id' => User::where('email', (string) $attendee['email'])->value('id'),
-                    'role_in_meeting' => 'invitado',
-                ]);
-                }
-                else
-                {
+                    $attendeeDisplayName = trim((string) data_get($attendee, 'displayName', ''));
+                    $attendeeName = $attendeeDisplayName !== ''
+                        ? $attendeeDisplayName
+                        : Str::before($attendeeEmail, '@');
+
+                    $attendeeUser = User::firstOrCreate(
+                        ['email' => $attendeeEmail],
+                        [
+                            'name' => $attendeeName !== '' ? $attendeeName : $attendeeEmail,
+                            'status' => 'active',
+                            'password' => bcrypt(Str::random(8)),
+                        ]
+                    );
+
+                    if (trim((string) $attendeeUser->name) === '') {
+                        $attendeeUser->forceFill([
+                            'name' => $attendeeName !== '' ? $attendeeName : $attendeeEmail,
+                        ])->save();
+                    }
+
                     $meeting->participants()->updateOrCreate([
-                        'user_id' => $user->id,
+                        'user_id' => $attendeeUser->id,
+                    ], [
+                        'external_name' => $attendeeName !== '' ? $attendeeName : null,
+                        'external_email' => $attendeeEmail,
                         'role_in_meeting' => 'invitado',
                     ]);
-                }
-                }catch (\Exception $e){
+                } catch (\Exception $e) {
                     Log::error($e->getMessage());
                 }
-
             }
             $stats[$isNew ? 'created' : 'updated']++;
         }

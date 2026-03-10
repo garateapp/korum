@@ -16,11 +16,19 @@ export default function Create({ auth, meeting, users, departments, minute = nul
         description: decision.description ?? '',
     })) ?? [];
 
-    const initialTopics = minute?.topics?.map((topic) => ({
+    const minuteTopics = minute?.topics?.map((topic) => ({
         title: topic.title ?? '',
         detail: topic.detail ?? '',
         conclusions: topic.conclusions ?? '',
     })) ?? [];
+
+    const agendaPrefillTopics = (meeting?.agenda_items ?? []).map((agendaItem) => ({
+        title: agendaItem.title ?? '',
+        detail: agendaItem.description ?? '',
+        conclusions: '',
+    }));
+
+    const initialTopics = minute ? minuteTopics : agendaPrefillTopics;
 
     const { data, setData, post, processing, errors, transform } = useForm({
         notes: minute?.summary ?? '',

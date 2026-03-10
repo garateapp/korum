@@ -39,9 +39,14 @@ export default function Show({ auth, minute }) {
                     <Link href={route('meetings.show', meeting.id)} className="btn btn-ghost hover:bg-base-200 rounded-2xl px-6">
                         <IconArrowLeft size={20} /> <span className="font-bold">Volver</span>
                     </Link>
-                    <button className="btn btn-primary btn-lg rounded-2xl px-10 shadow-xl shadow-primary/20 transition-all hover:scale-105" onClick={() => window.print()}>
+                    <a
+                        href={route('meetings.export', meeting.id)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-primary btn-lg rounded-2xl px-10 shadow-xl shadow-primary/20 transition-all hover:scale-105"
+                    >
                         Imprimir Acta Oficial
-                    </button>
+                    </a>
                 </div>
             </div>
 
