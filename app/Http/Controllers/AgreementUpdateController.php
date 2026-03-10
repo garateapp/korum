@@ -11,6 +11,8 @@ class AgreementUpdateController extends Controller
 {
     public function store(Request $request, Agreement $agreement)
     {
+        abort_unless($agreement->isVisibleTo((int) $request->user()->id), 403);
+
         $validated = $request->validate([
             'notes' => 'required|string',
             'status_after' => 'required|string|in:pendiente,en proceso,realizado,atrasado',

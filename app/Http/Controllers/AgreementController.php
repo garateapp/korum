@@ -10,7 +10,10 @@ class AgreementController extends Controller
 {
     public function index(Request $request)
     {
+        $userId = (int) $request->user()->id;
+
         $agreements = Agreement::query()
+            ->visibleTo($userId)
             ->with(['responsible', 'responsibles', 'department', 'minute.meeting'])
             ->when($request->search, fn($q, $search) => $q->where('subject', 'like', "%{$search}%"))
             ->when($request->status, fn($q, $status) => $q->where('status', $status))
@@ -35,9 +38,10 @@ class AgreementController extends Controller
 
     public function myPending(Request $request)
     {
-        $userId = auth()->id();
+        $userId = (int) auth()->id();
 
         $agreements = Agreement::query()
+            ->visibleTo($userId)
             ->with(['responsible', 'responsibles', 'department', 'minute.meeting'])
             ->where(function ($query) use ($userId) {
                 $query->where('responsible_id', $userId)
@@ -54,8 +58,10 @@ class AgreementController extends Controller
         ]);
     }
 
-    public function show(Agreement $agreement)
+    public function show(Request $request, Agreement $agreement)
     {
+        abort_unless($agreement->isVisibleTo((int) $request->user()->id), 403);
+
         $agreement->load(['responsible', 'responsibles', 'department', 'minute.meeting', 'updates.creator', 'attachments.uploader']);
 
         return Inertia::render('Agreements/Show', [

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AgreementController::myPending
- * @see app/Http/Controllers/AgreementController.php:36
+ * @see app/Http/Controllers/AgreementController.php:39
  * @route '/agreements/mypending'
  */
 export const myPending = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ myPending.definition = {
 
 /**
 * @see \App\Http\Controllers\AgreementController::myPending
- * @see app/Http/Controllers/AgreementController.php:36
+ * @see app/Http/Controllers/AgreementController.php:39
  * @route '/agreements/mypending'
  */
 myPending.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ myPending.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AgreementController::myPending
- * @see app/Http/Controllers/AgreementController.php:36
+ * @see app/Http/Controllers/AgreementController.php:39
  * @route '/agreements/mypending'
  */
 myPending.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ myPending.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\AgreementController::myPending
- * @see app/Http/Controllers/AgreementController.php:36
+ * @see app/Http/Controllers/AgreementController.php:39
  * @route '/agreements/mypending'
  */
 myPending.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -87,7 +87,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\AgreementController::show
- * @see app/Http/Controllers/AgreementController.php:57
+ * @see app/Http/Controllers/AgreementController.php:61
  * @route '/agreements/{agreement}'
  */
 export const show = (args: { agreement: number | { id: number } } | [agreement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -102,7 +102,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\AgreementController::show
- * @see app/Http/Controllers/AgreementController.php:57
+ * @see app/Http/Controllers/AgreementController.php:61
  * @route '/agreements/{agreement}'
  */
 show.url = (args: { agreement: number | { id: number } } | [agreement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -135,7 +135,7 @@ show.url = (args: { agreement: number | { id: number } } | [agreement: number | 
 
 /**
 * @see \App\Http\Controllers\AgreementController::show
- * @see app/Http/Controllers/AgreementController.php:57
+ * @see app/Http/Controllers/AgreementController.php:61
  * @route '/agreements/{agreement}'
  */
 show.get = (args: { agreement: number | { id: number } } | [agreement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -144,7 +144,7 @@ show.get = (args: { agreement: number | { id: number } } | [agreement: number | 
 })
 /**
 * @see \App\Http\Controllers\AgreementController::show
- * @see app/Http/Controllers/AgreementController.php:57
+ * @see app/Http/Controllers/AgreementController.php:61
  * @route '/agreements/{agreement}'
  */
 show.head = (args: { agreement: number | { id: number } } | [agreement: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({

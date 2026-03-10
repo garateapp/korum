@@ -34,7 +34,9 @@ class SearchController extends Controller
                 'status' => $m->status
             ]);
 
-        $agreements = Agreement::where('subject', 'like', "%{$q}%")
+        $agreements = Agreement::query()
+            ->visibleTo($userId)
+            ->where('subject', 'like', "%{$q}%")
             ->latest()
             ->take(5)
             ->get(['id', 'subject', 'status'])
