@@ -71,7 +71,7 @@ export default function Welcome({ auth }) {
             </main>
 
             {/* Features Bento Grid */}
-            <section className="py-32 bg-base-200/50">
+            <section className="bg-base-200/50">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="mb-20">
                         <h2 className="text-4xl font-black tracking-tight mb-4">Potencia tu organización</h2>
