@@ -56,7 +56,7 @@ class MeetingMinuteController extends Controller
             'notes' => 'nullable|string',
             'observations' => 'nullable|string',
             'agreements' => 'nullable|array',
-            'agreements.*.subject' => 'nullable|string|max:255',
+            'agreements.*.subject' => 'nullable|string',
             'agreements.*.responsible_ids' => 'nullable|array',
             'agreements.*.responsible_ids.*' => 'exists:users,id',
             'agreements.*.commitment_date' => 'nullable|date',

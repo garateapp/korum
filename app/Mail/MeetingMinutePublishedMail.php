@@ -6,6 +6,7 @@ use App\Models\Meeting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Symfony\Component\Mime\Email;
 
 class MeetingMinutePublishedMail extends Mailable
 {
@@ -35,6 +36,12 @@ class MeetingMinutePublishedMail extends Mailable
                 $this->pdfContent,
                 'Acta_'.$meetingCode.'.pdf',
                 ['mime' => 'application/pdf']
-            );
+            )
+            ->withSymfonyMessage(function (Email $message): void {
+                $headers = $message->getHeaders();
+                $headers->addTextHeader('X-Mailgun-Track', 'no');
+                $headers->addTextHeader('X-Mailgun-Track-Clicks', 'no');
+                $headers->addTextHeader('X-Mailgun-Track-Opens', 'no');
+            });
     }
 }
