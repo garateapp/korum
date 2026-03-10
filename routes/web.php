@@ -28,6 +28,14 @@ Route::get('/', function () {
 Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/manual/usuario', function () {
+        $manualPath = base_path('docs/manual/Manual_Usuario_Basico_Korum.pdf');
+
+        abort_unless(file_exists($manualPath), 404, 'Manual de usuario no disponible.');
+
+        return response()->file($manualPath);
+    })->name('manual.user');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

@@ -17,7 +17,8 @@ import {
     Building2,
     AlertCircle,
     Briefcase,
-    ShieldCheck
+    ShieldCheck,
+    BookOpen
 } from 'lucide-react';
 
 const NavItem = ({ href, icon: Icon, children, active, badge }) => (
@@ -198,6 +199,16 @@ export default function AuthenticatedLayout({ header, children }) {
                     </div>
 
                     <div className="flex items-center gap-4 md:gap-8">
+                        <a
+                            href={route('manual.user')}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-2xl border border-base-200 bg-white hover:bg-primary/5 hover:border-primary/30 transition-all"
+                        >
+                            <BookOpen size={16} className="text-primary" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-base-content/70">Manual de Usuario</span>
+                        </a>
+
                         {/* Search Quick Access Spectacular */}
                         <div className="hidden md:block relative group">
                             <div className="flex items-center gap-3 px-5 py-2.5 bg-base-200/50 rounded-2xl border border-transparent focus-within:border-primary/30 focus-within:bg-white focus-within:shadow-xl focus-within:shadow-primary/5 transition-all w-80">
