@@ -26,7 +26,8 @@ dayjs.locale('es');
 
 export default function Index({ auth, meetings, filters, googleCalendar }) {
     const [viewMode, setViewMode] = useState(filters.view || 'list');
-    const [showCancelled, setShowCancelled] = useState(filters.show_cancelled === 'true');
+    const [showCancelled, setShowCancelled] = useState(filters.show_cancelled === 'true' || filters.show_cancelled === true);
+    const [onlyToday, setOnlyToday] = useState(filters.only_today === 'true' || filters.only_today === true);
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
     const [sortBy, setSortBy] = useState(filters.sort_by || 'date');
     const [sortDir, setSortDir] = useState(filters.sort_dir || 'desc');
@@ -40,6 +41,7 @@ export default function Index({ auth, meetings, filters, googleCalendar }) {
             sort_by: sortBy,
             sort_dir: sortDir,
             show_cancelled: showCancelled,
+            only_today: onlyToday,
             view: viewMode,
             ...overrides,
         }, { preserveState: true, preserveScroll: true });
@@ -49,6 +51,12 @@ export default function Index({ auth, meetings, filters, googleCalendar }) {
         const newValue = !showCancelled;
         setShowCancelled(newValue);
         visitWithFilters({ show_cancelled: newValue });
+    };
+
+    const toggleOnlyToday = () => {
+        const newValue = !onlyToday;
+        setOnlyToday(newValue);
+        visitWithFilters({ only_today: newValue, page: 1 });
     };
 
     const switchView = (mode) => {
@@ -140,6 +148,17 @@ export default function Index({ auth, meetings, filters, googleCalendar }) {
                                 className="toggle toggle-primary toggle-sm"
                                 checked={showCancelled}
                                 onChange={toggleCancelled}
+                            />
+                        </label>
+                    </div>
+                    <div className="form-control">
+                        <label className="label cursor-pointer gap-3 bg-white px-4 py-2 rounded-2xl border border-base-200 shadow-sm hover:bg-base-50 transition-colors">
+                            <span className="text-[10px] font-black uppercase opacity-60">Solo Hoy</span>
+                            <input
+                                type="checkbox"
+                                className="toggle toggle-secondary toggle-sm"
+                                checked={onlyToday}
+                                onChange={toggleOnlyToday}
                             />
                         </label>
                     </div>

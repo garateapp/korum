@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\MeetingController::create
- * @see app/Http/Controllers/MeetingController.php:77
+ * @see app/Http/Controllers/MeetingController.php:81
  * @route '/meetings/create'
  */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -59,7 +59,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\MeetingController::create
- * @see app/Http/Controllers/MeetingController.php:77
+ * @see app/Http/Controllers/MeetingController.php:81
  * @route '/meetings/create'
  */
 create.url = (options?: RouteQueryOptions) => {
@@ -68,7 +68,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\MeetingController::create
- * @see app/Http/Controllers/MeetingController.php:77
+ * @see app/Http/Controllers/MeetingController.php:81
  * @route '/meetings/create'
  */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -77,7 +77,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\MeetingController::create
- * @see app/Http/Controllers/MeetingController.php:77
+ * @see app/Http/Controllers/MeetingController.php:81
  * @route '/meetings/create'
  */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -87,7 +87,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\MeetingController::store
- * @see app/Http/Controllers/MeetingController.php:85
+ * @see app/Http/Controllers/MeetingController.php:89
  * @route '/meetings'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -102,7 +102,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\MeetingController::store
- * @see app/Http/Controllers/MeetingController.php:85
+ * @see app/Http/Controllers/MeetingController.php:89
  * @route '/meetings'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -111,7 +111,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\MeetingController::store
- * @see app/Http/Controllers/MeetingController.php:85
+ * @see app/Http/Controllers/MeetingController.php:89
  * @route '/meetings'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -121,7 +121,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\MeetingController::show
- * @see app/Http/Controllers/MeetingController.php:116
+ * @see app/Http/Controllers/MeetingController.php:120
  * @route '/meetings/{meeting}'
  */
 export const show = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -136,7 +136,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\MeetingController::show
- * @see app/Http/Controllers/MeetingController.php:116
+ * @see app/Http/Controllers/MeetingController.php:120
  * @route '/meetings/{meeting}'
  */
 show.url = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -169,7 +169,7 @@ show.url = (args: { meeting: number | { id: number } } | [meeting: number | { id
 
 /**
 * @see \App\Http\Controllers\MeetingController::show
- * @see app/Http/Controllers/MeetingController.php:116
+ * @see app/Http/Controllers/MeetingController.php:120
  * @route '/meetings/{meeting}'
  */
 show.get = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -178,7 +178,7 @@ show.get = (args: { meeting: number | { id: number } } | [meeting: number | { id
 })
 /**
 * @see \App\Http\Controllers\MeetingController::show
- * @see app/Http/Controllers/MeetingController.php:116
+ * @see app/Http/Controllers/MeetingController.php:120
  * @route '/meetings/{meeting}'
  */
 show.head = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -188,7 +188,7 @@ show.head = (args: { meeting: number | { id: number } } | [meeting: number | { i
 
 /**
 * @see \App\Http\Controllers\MeetingController::edit
- * @see app/Http/Controllers/MeetingController.php:128
+ * @see app/Http/Controllers/MeetingController.php:132
  * @route '/meetings/{meeting}/edit'
  */
 export const edit = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -203,7 +203,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\MeetingController::edit
- * @see app/Http/Controllers/MeetingController.php:128
+ * @see app/Http/Controllers/MeetingController.php:132
  * @route '/meetings/{meeting}/edit'
  */
 edit.url = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -236,7 +236,7 @@ edit.url = (args: { meeting: number | { id: number } } | [meeting: number | { id
 
 /**
 * @see \App\Http\Controllers\MeetingController::edit
- * @see app/Http/Controllers/MeetingController.php:128
+ * @see app/Http/Controllers/MeetingController.php:132
  * @route '/meetings/{meeting}/edit'
  */
 edit.get = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -245,7 +245,7 @@ edit.get = (args: { meeting: number | { id: number } } | [meeting: number | { id
 })
 /**
 * @see \App\Http\Controllers\MeetingController::edit
- * @see app/Http/Controllers/MeetingController.php:128
+ * @see app/Http/Controllers/MeetingController.php:132
  * @route '/meetings/{meeting}/edit'
  */
 edit.head = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -255,7 +255,7 @@ edit.head = (args: { meeting: number | { id: number } } | [meeting: number | { i
 
 /**
 * @see \App\Http\Controllers\MeetingController::update
- * @see app/Http/Controllers/MeetingController.php:139
+ * @see app/Http/Controllers/MeetingController.php:143
  * @route '/meetings/{meeting}'
  */
 export const update = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -270,7 +270,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\MeetingController::update
- * @see app/Http/Controllers/MeetingController.php:139
+ * @see app/Http/Controllers/MeetingController.php:143
  * @route '/meetings/{meeting}'
  */
 update.url = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -303,7 +303,7 @@ update.url = (args: { meeting: number | { id: number } } | [meeting: number | { 
 
 /**
 * @see \App\Http\Controllers\MeetingController::update
- * @see app/Http/Controllers/MeetingController.php:139
+ * @see app/Http/Controllers/MeetingController.php:143
  * @route '/meetings/{meeting}'
  */
 update.put = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -312,7 +312,7 @@ update.put = (args: { meeting: number | { id: number } } | [meeting: number | { 
 })
 /**
 * @see \App\Http\Controllers\MeetingController::update
- * @see app/Http/Controllers/MeetingController.php:139
+ * @see app/Http/Controllers/MeetingController.php:143
  * @route '/meetings/{meeting}'
  */
 update.patch = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -322,7 +322,7 @@ update.patch = (args: { meeting: number | { id: number } } | [meeting: number | 
 
 /**
 * @see \App\Http\Controllers\MeetingController::destroy
- * @see app/Http/Controllers/MeetingController.php:169
+ * @see app/Http/Controllers/MeetingController.php:173
  * @route '/meetings/{meeting}'
  */
 export const destroy = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -337,7 +337,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\MeetingController::destroy
- * @see app/Http/Controllers/MeetingController.php:169
+ * @see app/Http/Controllers/MeetingController.php:173
  * @route '/meetings/{meeting}'
  */
 destroy.url = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -370,7 +370,7 @@ destroy.url = (args: { meeting: number | { id: number } } | [meeting: number | {
 
 /**
 * @see \App\Http\Controllers\MeetingController::destroy
- * @see app/Http/Controllers/MeetingController.php:169
+ * @see app/Http/Controllers/MeetingController.php:173
  * @route '/meetings/{meeting}'
  */
 destroy.delete = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -380,7 +380,7 @@ destroy.delete = (args: { meeting: number | { id: number } } | [meeting: number 
 
 /**
 * @see \App\Http\Controllers\MeetingController::cancel
- * @see app/Http/Controllers/MeetingController.php:186
+ * @see app/Http/Controllers/MeetingController.php:190
  * @route '/meetings/{meeting}/cancel'
  */
 export const cancel = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -395,7 +395,7 @@ cancel.definition = {
 
 /**
 * @see \App\Http\Controllers\MeetingController::cancel
- * @see app/Http/Controllers/MeetingController.php:186
+ * @see app/Http/Controllers/MeetingController.php:190
  * @route '/meetings/{meeting}/cancel'
  */
 cancel.url = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -428,7 +428,7 @@ cancel.url = (args: { meeting: number | { id: number } } | [meeting: number | { 
 
 /**
 * @see \App\Http\Controllers\MeetingController::cancel
- * @see app/Http/Controllers/MeetingController.php:186
+ * @see app/Http/Controllers/MeetingController.php:190
  * @route '/meetings/{meeting}/cancel'
  */
 cancel.patch = (args: { meeting: number | { id: number } } | [meeting: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({

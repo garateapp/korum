@@ -30,11 +30,15 @@ class MeetingController extends Controller
         $sortBy = in_array($request->input('sort_by'), $allowedSortColumns, true)
             ? $request->input('sort_by')
             : 'date';
-        $sortDirection = $request->input('sort_dir') === 'asc' ? 'asc' : 'desc';
+        $sortDirection = $request->input('sort_dir') === 'desc' ? 'desc' : 'asc';
 
         // Default: exclude cancelled meetings
         if (!$request->boolean('show_cancelled')) {
             $query->where('status', '!=', 'cancelada');
+        }
+
+        if ($request->boolean('only_today')) {
+            $query->whereDate('date', now()->toDateString());
         }
 
         if ($request->filled('search')) {
@@ -65,7 +69,7 @@ class MeetingController extends Controller
 
         return Inertia::render('Meetings/Index', [
             'meetings' => $meetings,
-            'filters' => $request->only(['search', 'show_cancelled', 'view', 'sort_by', 'sort_dir']),
+            'filters' => $request->only(['search', 'show_cancelled', 'only_today', 'view', 'sort_by', 'sort_dir']),
             'googleCalendar' => [
                 'connected' => (bool) $request->user()?->google_refresh_token,
                 'connected_at' => $request->user()?->google_calendar_connected_at?->toISOString(),
