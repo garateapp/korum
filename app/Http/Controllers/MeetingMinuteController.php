@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Meeting;
 use App\Models\MeetingMinute;
+use App\Services\MeetingMinuteEmailService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,10 @@ use Illuminate\Validation\ValidationException;
 
 class MeetingMinuteController extends Controller
 {
+    public function __construct(private readonly MeetingMinuteEmailService $meetingMinuteEmailService)
+    {
+    }
+
     public function create(Meeting $meeting)
     {
         $meeting->load([
@@ -149,7 +154,20 @@ class MeetingMinuteController extends Controller
 
             DB::commit();
             if ($isPublishing) {
-                return redirect()->route('meetings.show', $meeting->id)->with('success', 'Minuta publicada exitosamente.');
+                $redirect = redirect()->route('meetings.show', $meeting->id)
+                    ->with('success', 'Minuta publicada exitosamente.');
+
+                try {
+                    $this->meetingMinuteEmailService->sendPublishedMinute($meeting);
+                } catch (\Throwable $exception) {
+                    report($exception);
+                    $redirect->with(
+                        'warning',
+                        'La minuta se publico, pero hubo un problema enviando algunos correos de notificacion.'
+                    );
+                }
+
+                return $redirect;
             }
 
             $redirect = redirect()->route('meetings.minute.create', $meeting->id)
