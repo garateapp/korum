@@ -37,10 +37,25 @@ export default function Show({ auth, meeting, users }) {
     const [activeTab, setActiveTab] = useState('antes'); // antes, durante, despues
     const [agendaModal, setAgendaModal] = useState(false);
     const [participantModal, setParticipantModal] = useState(false);
+    const [participantSearch, setParticipantSearch] = useState('');
     const participants = meeting.participants ?? [];
 
     const agendaForm = useForm({ title: '', description: '', speaker_id: '', estimated_time_min: 15 });
     const participantForm = useForm({ user_id: '', external_name: '', role_in_meeting: 'Asistente' });
+    const availableUsers = users ?? [];
+    const normalizedParticipantSearch = participantSearch.trim().toLowerCase();
+    const selectedParticipantUser = availableUsers.find((u) => String(u.id) === String(participantForm.data.user_id));
+    const filteredUsers = availableUsers.filter((u) => {
+        if (normalizedParticipantSearch === '') {
+            return true;
+        }
+
+        const searchable = `${u.name ?? ''} ${u.email ?? ''}`.toLowerCase();
+        return searchable.includes(normalizedParticipantSearch);
+    });
+    const selectableUsers = selectedParticipantUser && !filteredUsers.some((u) => u.id === selectedParticipantUser.id)
+        ? [selectedParticipantUser, ...filteredUsers]
+        : filteredUsers;
 
     const getParticipantName = (participant) => {
         const internalName = participant.user?.name?.trim();
@@ -68,7 +83,7 @@ export default function Show({ auth, meeting, users }) {
     const addParticipant = (e) => {
         e.preventDefault();
         participantForm.post(route('meetings.participants.store', meeting.id), {
-            onSuccess: () => { setParticipantModal(false); participantForm.reset(); }
+            onSuccess: () => { setParticipantModal(false); participantForm.reset(); setParticipantSearch(''); }
         });
     };
 
@@ -87,6 +102,19 @@ export default function Show({ auth, meeting, users }) {
         if (confirm('¿Está seguro de que desea cancelar esta reunión?')) {
             router.patch(route('meetings.cancel', meeting.id));
         }
+    };
+
+    const hasPendingAttendance = participants.length > 0
+        && participants.some((participant) => !participant.attendance_status);
+
+    const switchTab = (tabId) => {
+        if (tabId === 'despues' && hasPendingAttendance) {
+            alert('Debes marcar la asistencia de todos los invitados antes de pasar a "Después".');
+            setActiveTab('durante');
+            return;
+        }
+
+        setActiveTab(tabId);
     };
 
     const steps = [
@@ -135,23 +163,33 @@ export default function Show({ auth, meeting, users }) {
 
             {/* SPECTACULAR STEPPER */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-                {steps.map((step, idx) => (
-                    <button
-                        key={step.id}
-                        onClick={() => setActiveTab(step.id)}
-                        className={`bento-card p-4 flex items-center gap-4 transition-all ${activeTab === step.id ? 'border-primary ring-2 ring-primary/10 bg-primary/5' : 'opacity-60 grayscale hover:grayscale-0 hover:opacity-100 border-transparent bg-base-200'}`}
-                    >
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${activeTab === step.id ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'bg-base-300 text-base-content'}`}>
-                            <step.icon size={24} />
-                        </div>
-                        <div className="text-left">
-                            <p className="text-[10px] uppercase font-black tracking-[0.2em] opacity-50">{step.sub}</p>
-                            <h4 className="font-black text-lg">{step.label}</h4>
-                        </div>
-                        {idx < steps.length - 1 && <div className="hidden md:block flex-1 border-t border-dashed border-base-300 mx-4"></div>}
-                    </button>
-                ))}
+                {steps.map((step, idx) => {
+                    const isLockedStep = step.id === 'despues' && hasPendingAttendance;
+
+                    return (
+                        <button
+                            key={step.id}
+                            onClick={() => switchTab(step.id)}
+                            className={`bento-card p-4 flex items-center gap-4 transition-all ${activeTab === step.id ? 'border-primary ring-2 ring-primary/10 bg-primary/5' : 'opacity-60 grayscale hover:grayscale-0 hover:opacity-100 border-transparent bg-base-200'} ${isLockedStep ? 'cursor-not-allowed' : ''}`}
+                        >
+                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${activeTab === step.id ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'bg-base-300 text-base-content'}`}>
+                                <step.icon size={24} />
+                            </div>
+                            <div className="text-left">
+                                <p className="text-[10px] uppercase font-black tracking-[0.2em] opacity-50">{step.sub}</p>
+                                <h4 className="font-black text-lg">{step.label}</h4>
+                            </div>
+                            {idx < steps.length - 1 && <div className="hidden md:block flex-1 border-t border-dashed border-base-300 mx-4"></div>}
+                        </button>
+                    );
+                })}
             </div>
+
+            {hasPendingAttendance && (
+                <p className="text-[11px] font-black uppercase tracking-wider text-warning mb-8">
+                    Debes marcar la asistencia completa antes de avanzar a “Después”.
+                </p>
+            )}
 
             <AnimatePresence mode="wait">
                 <motion.div
@@ -221,7 +259,7 @@ export default function Show({ auth, meeting, users }) {
                                 <div className="bento-card">
                                     <div className="flex justify-between items-center mb-6">
                                         <h3 className="text-xl font-black flex items-center gap-2"><Users className="text-primary" /> Invitados</h3>
-                                        <button onClick={() => setParticipantModal(true)} className="btn btn-ghost btn-sm btn-circle"><Plus size={18} /></button>
+                                        <button onClick={() => { setParticipantSearch(''); setParticipantModal(true); }} className="btn btn-ghost btn-sm btn-circle"><Plus size={18} /></button>
                                     </div>
                                     {participants.length > 0 ? (
                                         <div className="space-y-4">
@@ -386,11 +424,24 @@ export default function Show({ auth, meeting, users }) {
                     <p className="text-sm font-medium opacity-40 mb-8">Internos o colaboradores externos.</p>
                     <form onSubmit={addParticipant} className="space-y-6">
                         <div className="form-control">
+                            <label className="label"><span className="label-text font-black text-[10px] uppercase tracking-widest opacity-50">Buscar Persona</span></label>
+                            <input
+                                type="text"
+                                className="input input-bordered rounded-2xl bg-base-200 border-none font-bold"
+                                placeholder="Nombre o correo..."
+                                value={participantSearch}
+                                onChange={(e) => setParticipantSearch(e.target.value)}
+                            />
+                        </div>
+                        <div className="form-control">
                             <label className="label"><span className="label-text font-black text-[10px] uppercase tracking-widest opacity-50">Usuario Interno</span></label>
                             <select className="select select-bordered rounded-2xl bg-base-200 border-none font-bold" value={participantForm.data.user_id} onChange={e => participantForm.setData('user_id', e.target.value)}>
                                 <option value="">Externo...</option>
-                                {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
+                                {selectableUsers.map(u => <option key={u.id} value={u.id}>{u.name}{u.email ? ` (${u.email})` : ''}</option>)}
                             </select>
+                            {selectableUsers.length === 0 && (
+                                <span className="text-[10px] mt-1 opacity-60 font-bold">No se encontraron personas con ese filtro.</span>
+                            )}
                         </div>
                         <div className="form-control">
                             <label className="label"><span className="label-text font-black text-[10px] uppercase tracking-widest opacity-50">O Nombre Externo</span></label>
@@ -401,7 +452,7 @@ export default function Show({ auth, meeting, users }) {
                             <input type="text" className="input input-bordered rounded-2xl bg-base-200 border-none font-bold" placeholder="Ej: Invitado Especial" value={participantForm.data.role_in_meeting} onChange={e => participantForm.setData('role_in_meeting', e.target.value)} />
                         </div>
                         <div className="modal-action gap-3">
-                            <button type="button" className="btn btn-ghost rounded-2xl font-black text-[10px] uppercase tracking-widest" onClick={() => setParticipantModal(false)}>Cerrar</button>
+                            <button type="button" className="btn btn-ghost rounded-2xl font-black text-[10px] uppercase tracking-widest" onClick={() => { setParticipantModal(false); setParticipantSearch(''); }}>Cerrar</button>
                             <button type="submit" className="btn btn-primary rounded-2xl px-8 font-black text-[10px] uppercase tracking-widest" disabled={participantForm.processing}>Agregar Invitado</button>
                         </div>
                     </form>

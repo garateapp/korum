@@ -26,10 +26,20 @@ class MeetingMinuteController extends Controller
             return redirect()->route('minutes.show', $meeting->minute->id);
         }
 
+        $invitedUsers = $meeting->participants
+            ->pluck('user')
+            ->filter()
+            ->unique('id')
+            ->map(fn ($user): array => [
+                'id' => $user->id,
+                'name' => $user->name,
+            ])
+            ->values();
+
         return Inertia::render('Minutes/Create', [
             'meeting' => $meeting,
             'minute' => $meeting->minute,
-            'users' => \App\Models\User::all(['id', 'name']),
+            'users' => $invitedUsers,
             'departments' => \App\Models\Department::all(['id', 'name']),
         ]);
     }
@@ -56,6 +66,26 @@ class MeetingMinuteController extends Controller
 
         $action = (string) ($validated['action'] ?? 'draft');
         $isPublishing = $action === 'publish';
+        $invitedUserIds = $meeting->participants()
+            ->whereNotNull('user_id')
+            ->pluck('user_id')
+            ->map(fn ($id): int => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
+
+        $hasInvalidResponsible = collect($validated['agreements'] ?? [])->contains(
+            function (array $agreement) use ($invitedUserIds): bool {
+                return collect($agreement['responsible_ids'] ?? [])
+                    ->contains(fn ($id): bool => !in_array((int) $id, $invitedUserIds, true));
+            }
+        );
+
+        if ($hasInvalidResponsible) {
+            throw ValidationException::withMessages([
+                'agreements' => 'Solo puedes asignar responsables que estén invitados a la reunión.',
+            ]);
+        }
 
         $summary = $this->nullableTrim($validated['notes'] ?? null);
         $observations = $this->nullableTrim($validated['observations'] ?? null);
@@ -144,7 +174,16 @@ class MeetingMinuteController extends Controller
 
     public function show(MeetingMinute $minute)
     {
-        $minute->load(['meeting.department', 'meeting.meetingType', 'agreements.responsibles', 'agreements.department', 'decisions', 'topics', 'publisher']);
+        $minute->load([
+            'meeting.department',
+            'meeting.meetingType',
+            'meeting.participants.user',
+            'agreements.responsibles',
+            'agreements.department',
+            'decisions',
+            'topics',
+            'publisher',
+        ]);
         return Inertia::render('Minutes/Show', [
             'minute' => $minute
         ]);

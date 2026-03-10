@@ -1,6 +1,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { IconArrowLeft, IconPlus, IconTrash, IconDeviceFloppy, IconFileDescription, IconCalendar, IconClock, IconUsers } from '@tabler/icons-react';
+import MDEditor from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
+import '@uiw/react-markdown-preview/markdown.css';
 
 export default function Create({ auth, meeting, users, departments, minute = null }) {
     const initialAgreements = minute?.agreements?.map((agreement) => ({
@@ -146,12 +149,18 @@ export default function Create({ auth, meeting, users, departments, minute = nul
                             <h3 className="text-lg font-bold mb-4 flex items-center gap-2"><IconFileDescription /> Resumen de la Reunión</h3>
                             <div className="bg-base-100 shadow-sm sm:rounded-lg p-6">
                                 <label className="label"><span className="label-text font-semibold">Desarrollo y temas tratados *</span></label>
-                                <textarea
-                                    className="textarea textarea-bordered h-48 w-full"
-                                    placeholder="Describa los puntos principales discutidos..."
-                                    value={data.notes}
-                                    onChange={e => setData('notes', e.target.value)}
-                                ></textarea>
+                                <div data-color-mode="light">
+                                    <MDEditor
+                                        value={data.notes}
+                                        onChange={(value) => setData('notes', value ?? '')}
+                                        preview="edit"
+                                        height={280}
+                                        visibleDragbar={false}
+                                        textareaProps={{
+                                            placeholder: 'Describa los puntos principales discutidos...',
+                                        }}
+                                    />
+                                </div>
                                 {errors.notes && <span className="text-error text-sm mt-1">{errors.notes}</span>}
                             </div>
 
@@ -224,15 +233,24 @@ export default function Create({ auth, meeting, users, departments, minute = nul
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="form-control md:col-span-2">
                                                     <label className="label"><span className="label-text text-xs font-bold uppercase">Descripción del Acuerdo</span></label>
-                                                    <input
-                                                        type="text"
-                                                        className="input input-bordered input-sm"
-                                                        value={agreement.subject}
-                                                        onChange={e => updateAgreement(index, 'subject', e.target.value)}
-                                                    />
+                                                    <div data-color-mode="light">
+                                                        <MDEditor
+                                                            preview="edit"
+                                                            height={220}
+                                                            visibleDragbar={false}
+                                                            value={agreement.subject}
+                                                            onChange={(value) => updateAgreement(index, 'subject', value ?? '')}
+                                                            textareaProps={{
+                                                                placeholder: 'Detalle del acuerdo, alcance y entregables...',
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    {errors[`agreements.${index}.subject`] && (
+                                                        <span className="text-error text-xs mt-1">{errors[`agreements.${index}.subject`]}</span>
+                                                    )}
                                                 </div>
                                                 <div className="form-control md:col-span-2">
-                                                    <label className="label"><span className="label-text text-xs font-bold uppercase text-primary">Responsables (Seleccione uno o más)</span></label>
+                                                    <label className="label"><span className="label-text text-xs font-bold uppercase text-primary">Responsables (Invitados)</span></label>
                                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-base-100 rounded-xl border border-base-300 max-h-40 overflow-y-auto">
                                                         {users.map(u => (
                                                             <label key={u.id} className="label cursor-pointer justify-start gap-2 hover:bg-base-200 p-1 rounded-lg transition-colors">
@@ -257,6 +275,11 @@ export default function Create({ auth, meeting, users, departments, minute = nul
                                                                 <span className="label-text text-[10px] font-bold truncate">{u.name}</span>
                                                             </label>
                                                         ))}
+                                                        {users.length === 0 && (
+                                                            <p className="text-xs opacity-60 col-span-2 sm:col-span-3">
+                                                                No hay invitados internos disponibles para asignar.
+                                                            </p>
+                                                        )}
                                                     </div>
                                                     {errors[`agreements.${index}.responsible_ids`] && <span className="text-error text-xs mt-1">{errors[`agreements.${index}.responsible_ids`]}</span>}
                                                 </div>

@@ -4,7 +4,14 @@ import { IconArrowLeft, IconFileCheck, IconUsers, IconCalendar, IconClock, IconM
 
 export default function Show({ auth, minute }) {
     const meeting = minute.meeting;
+    const participants = meeting.participants ?? [];
     const publishedAt = minute.published_at ? new Date(minute.published_at).toLocaleDateString() : 'Sin publicar';
+    const getParticipantName = (participant) =>
+        participant.user?.name?.trim()
+        || participant.external_name?.trim()
+        || participant.user?.email
+        || participant.external_email
+        || 'Sin nombre';
 
     return (
         <AuthenticatedLayout header="Minuta de Reunión">
@@ -184,9 +191,9 @@ export default function Show({ auth, minute }) {
                             Asistencia <IconUsers size={16} />
                         </h4>
                         <ul className="space-y-3">
-                            {meeting.participants?.map(p => (
+                            {participants.map(p => (
                                 <li key={p.id} className="flex justify-between items-center text-sm">
-                                    <span>{p.user ? p.user.name : p.external_name}</span>
+                                    <span>{getParticipantName(p)}</span>
                                     <span className={`badge badge-xs ${p.attendance_status === 'presente' ? 'badge-success' : 'badge-ghost opacity-50'}`}>
                                         {p.attendance_status}
                                     </span>

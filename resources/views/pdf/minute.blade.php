@@ -144,6 +144,28 @@
     @endforeach
     @endif
 
+    <div class="section-title">Decisiones Tomadas</div>
+    <table class="data">
+        <thead>
+            <tr>
+                <th style="width: 40px;">#</th>
+                <th>Decisión</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($meeting->minute->decisions as $index => $decision)
+            <tr>
+                <td>{{ $index + 1 }}</td>
+                <td>{!! nl2br(e($decision->description)) !!}</td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="2" style="opacity: 0.7;">No se registraron decisiones en esta minuta.</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+
     <div class="section-title">Acuerdos y Compromisos</div>
     <table class="data">
         <thead>

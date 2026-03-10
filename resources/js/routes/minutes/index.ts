@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\MeetingMinuteController::show
- * @see app/Http/Controllers/MeetingMinuteController.php:145
+ * @see app/Http/Controllers/MeetingMinuteController.php:175
  * @route '/minutes/{minute}'
  */
 export const show = (args: { minute: number | { id: number } } | [minute: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\MeetingMinuteController::show
- * @see app/Http/Controllers/MeetingMinuteController.php:145
+ * @see app/Http/Controllers/MeetingMinuteController.php:175
  * @route '/minutes/{minute}'
  */
 show.url = (args: { minute: number | { id: number } } | [minute: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -49,7 +49,7 @@ show.url = (args: { minute: number | { id: number } } | [minute: number | { id: 
 
 /**
 * @see \App\Http\Controllers\MeetingMinuteController::show
- * @see app/Http/Controllers/MeetingMinuteController.php:145
+ * @see app/Http/Controllers/MeetingMinuteController.php:175
  * @route '/minutes/{minute}'
  */
 show.get = (args: { minute: number | { id: number } } | [minute: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -58,7 +58,7 @@ show.get = (args: { minute: number | { id: number } } | [minute: number | { id: 
 })
 /**
 * @see \App\Http\Controllers\MeetingMinuteController::show
- * @see app/Http/Controllers/MeetingMinuteController.php:145
+ * @see app/Http/Controllers/MeetingMinuteController.php:175
  * @route '/minutes/{minute}'
  */
 show.head = (args: { minute: number | { id: number } } | [minute: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
