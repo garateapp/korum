@@ -20,6 +20,7 @@ class GoogleCalendarService
 {
     private const CALENDAR_SCOPE = 'https://www.googleapis.com/auth/calendar.events';
     private const CALENDAR_BASE_URL = 'https://www.googleapis.com/calendar/v3/calendars/primary/events';
+    private const CALENDAR_TIMEZONE = 'America/Santiago';
 
     public function redirectToAuthorization(bool $forceConsent = false): RedirectResponse
     {
@@ -266,15 +267,18 @@ class GoogleCalendarService
         $accessToken = $this->ensureFreshAccessToken($user);
         $events = [];
         $pageToken = null;
+        $timezone = $this->calendarTimezone();
 
         do {
+            $now = now($timezone);
             $params = [
                 'singleEvents' => 'true',
                 'orderBy' => 'startTime',
                 'showDeleted' => 'true',
                 'maxResults' => 250,
-                'timeMin' => now()->startOfDay()->toRfc3339String(),
-                'timeMax' => now()->addMonths(6)->endOfDay()->toRfc3339String(),
+                'timeZone' => $timezone,
+                'timeMin' => $now->copy()->startOfDay()->toRfc3339String(),
+                'timeMax' => $now->copy()->addMonths(6)->endOfDay()->toRfc3339String(),
             ];
 
             if ($pageToken) {
@@ -360,12 +364,23 @@ class GoogleCalendarService
      */
     private function extractDateRange(array $event): ?array
     {
+        $timezone = $this->calendarTimezone();
         $startDateTime = data_get($event, 'start.dateTime');
         $endDateTime = data_get($event, 'end.dateTime');
 
         if ($startDateTime && $endDateTime) {
-            $startAt = Carbon::parse($startDateTime);
-            $endAt = Carbon::parse($endDateTime);
+            $startTimezone = (string) data_get($event, 'start.timeZone', '');
+            $endTimezone = (string) data_get($event, 'end.timeZone', '');
+
+            $startAt = $startTimezone !== ''
+                ? Carbon::parse($startDateTime, $startTimezone)
+                : Carbon::parse($startDateTime);
+            $endAt = $endTimezone !== ''
+                ? Carbon::parse($endDateTime, $endTimezone)
+                : Carbon::parse($endDateTime);
+
+            $startAt = $startAt->setTimezone($timezone);
+            $endAt = $endAt->setTimezone($timezone);
         } else {
             $startDate = data_get($event, 'start.date');
             $endDate = data_get($event, 'end.date');
@@ -373,8 +388,8 @@ class GoogleCalendarService
                 return null;
             }
 
-            $startAt = Carbon::parse($startDate, config('app.timezone'))->setTime(9, 0, 0);
-            $endAt = Carbon::parse($endDate, config('app.timezone'))->subDay()->setTime(10, 0, 0);
+            $startAt = Carbon::parse($startDate, $timezone)->setTime(9, 0, 0);
+            $endAt = Carbon::parse($endDate, $timezone)->subDay()->setTime(10, 0, 0);
         }
 
         if ($endAt->lte($startAt)) {
@@ -438,7 +453,7 @@ class GoogleCalendarService
      */
     private function buildGoogleEventPayload(Meeting $meeting): array
     {
-        $timezone = (string) config('app.timezone', 'UTC');
+        $timezone = $this->calendarTimezone();
         $startAt = Carbon::parse($meeting->date.' '.$meeting->start_time, $timezone);
         $endAt = Carbon::parse($meeting->date.' '.$meeting->end_time, $timezone);
 
@@ -522,5 +537,10 @@ class GoogleCalendarService
         if (!Schema::hasColumns('meetings', ['google_event_id', 'google_calendar_id', 'google_synced_at'])) {
             throw new RuntimeException('Faltan columnas de integración en meetings. Ejecuta: php artisan migrate');
         }
+    }
+
+    private function calendarTimezone(): string
+    {
+        return self::CALENDAR_TIMEZONE;
     }
 }
